@@ -1,36 +1,31 @@
 import {Elysia, t} from "elysia";
 import {swagger} from "@elysiajs/swagger";
 import {cors} from "@elysiajs/cors";
-
-let notes: string[] = ["Moonhalo"];
+import {websocket} from "./websocket";
 
 const app = new Elysia()
   .use(cors())
   .use(swagger())
-  .ws("/ws", {
-    body: t.String(),
-    response: t.Object({
-      type: t.String(),
-      data: t.String(),
-    }),
-    open(ws) {
-      ws.subscribe("chat-room");
-      ws.publish("chat-room", {type: "system", data: "New user joined!"});
+  .use(websocket)
+  .post(
+    "/chat",
+    ({body}) => {
+      app.server?.publish?.(
+        "lobby",
+        JSON.stringify({type: "chat", data: body.message, channel: "lobby"})
+      );
+      return {status: "ok"};
     },
-    close(ws) {
-      console.log("User disconnected");
-      ws.unsubscribe("chat-room");
-    },
-    message(ws, message) {
-      ws.publish("chat-room", {type: "chat", data: message});
-    },
-  })
+    {
+      body: t.Object({message: t.String()}),
+    }
+  )
   .post(
     "/todo",
     ({body}) => {
       app.server?.publish?.(
-        "chat-room",
-        JSON.stringify({type: "todo", data: body.todo})
+        "lobby",
+        JSON.stringify({type: "todo", data: body.todo, channel: "lobby"})
       );
       return {status: "ok"};
     },

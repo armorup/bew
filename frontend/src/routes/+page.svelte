@@ -5,8 +5,9 @@
   
   let messages: string[] = []
   let todos: string[] = []
-  let input = ''
   let todo = ''
+  let message = ''
+  let channel : string | null = 'lobby'
   let ws: ReturnType<typeof api['ws']['subscribe']> | null = null
 
   function connect() {
@@ -17,10 +18,13 @@
     })
 
     ws.subscribe((message) => {
-      if (message.data.type === 'todo') {
-        todos = [...todos, message.data.data]
+      let {type, data, channel} = message.data
+      console.log(type, data, channel)
+      
+      if (type === 'todo') {
+        todos = [...todos, data]
       } else {
-        messages = [...messages, message.data.data]
+        messages = [...messages, data]
       }
     })
 
@@ -30,9 +34,9 @@
   }
 
   function sendMessage() {
-    if (ws && input) {
-      ws.send(input)
-      input = ''
+    if (message.trim()) {
+      api.chat.post({ message })
+      message = ''
     }
   }
 
@@ -52,8 +56,8 @@
       <div class="message">{msg}</div>
     {/each}
     
-    <input bind:value={input} />
-    <button on:click={sendMessage}>Send</button>
+    <input bind:value={message} />
+    <button on:click={() => sendMessage()}>Send</button>
   </div>
 {/if}
 
