@@ -7,7 +7,7 @@ let notes: string[] = ["Moonhalo"];
 const app = new Elysia()
   .use(cors())
   .use(swagger())
-  .ws("/chat", {
+  .ws("/ws", {
     body: t.String(),
     response: t.Object({
       type: t.String(),
@@ -16,6 +16,10 @@ const app = new Elysia()
     open(ws) {
       ws.subscribe("chat-room");
       ws.publish("chat-room", {type: "system", data: "New user joined!"});
+    },
+    close(ws) {
+      console.log("User disconnected");
+      ws.unsubscribe("chat-room");
     },
     message(ws, message) {
       ws.publish("chat-room", {type: "chat", data: message});

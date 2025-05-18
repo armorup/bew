@@ -1,15 +1,16 @@
 <!-- Client (Svelte) -->
+ 
 <script lang="ts">
   import { api } from '$lib/eden-client'
-
+  
   let messages: string[] = []
   let todos: string[] = []
   let input = ''
-  let ws: ReturnType<typeof api['chat']['subscribe']> | null = null
   let todo = ''
+  let ws: ReturnType<typeof api['ws']['subscribe']> | null = null
 
   function connect() {
-    ws = api.chat.subscribe()
+    ws = api.ws.subscribe()
 
     ws.on('open', () => {
       console.log('Connected to chat room')
