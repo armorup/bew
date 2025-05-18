@@ -3,8 +3,10 @@
   import { api } from '$lib/eden-client'
 
   let messages: string[] = []
+  let todos: string[] = []
   let input = ''
   let ws: ReturnType<typeof api['chat']['subscribe']> | null = null
+  let todo = ''
 
   function connect() {
     ws = api.chat.subscribe()
@@ -14,7 +16,11 @@
     })
 
     ws.subscribe((message) => {
-      messages = [...messages, message.data]
+      if (message.data.type === 'todo') {
+        todos = [...todos, message.data.data]
+      } else {
+        messages = [...messages, message.data.data]
+      }
     })
 
     ws.on('close', () => {
@@ -26,6 +32,13 @@
     if (ws && input) {
       ws.send(input)
       input = ''
+    }
+  }
+
+  async function sendTodo() {
+    if (todo.trim()) {
+      await api.todo.post({ todo })
+      todo = ''
     }
   }
 </script>
@@ -42,3 +55,21 @@
     <button on:click={sendMessage}>Send</button>
   </div>
 {/if}
+
+<!-- Todo list -->
+{#if ws}
+  <div class="todos">
+    <h3>Todos</h3>
+    <ul>
+      {#each todos as todo}
+        <li>{todo}</li>
+      {/each}
+    </ul>
+  </div>
+{/if}
+
+<!-- Add todo input and button below chat -->
+<div class="todo">
+  <input placeholder="Add a todo..." bind:value={todo} />
+  <button on:click={sendTodo}>Add Todo</button>
+</div>
