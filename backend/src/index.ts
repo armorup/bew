@@ -2,24 +2,13 @@ import {Elysia, t} from "elysia";
 import {swagger} from "@elysiajs/swagger";
 import {cors} from "@elysiajs/cors";
 import {websocket} from "./websocket";
+import {chat} from "./chat";
 
-const app = new Elysia()
+export const app = new Elysia()
   .use(cors())
   .use(swagger())
   .use(websocket)
-  .post(
-    "/chat",
-    ({body}) => {
-      app.server?.publish?.(
-        "lobby",
-        JSON.stringify({type: "chat", data: body.message, channel: "lobby"})
-      );
-      return {status: "ok"};
-    },
-    {
-      body: t.Object({message: t.String()}),
-    }
-  )
+  .use(chat)
   .post(
     "/todo",
     ({body}) => {
