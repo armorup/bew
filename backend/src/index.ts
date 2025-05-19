@@ -3,28 +3,14 @@ import {swagger} from "@elysiajs/swagger";
 import {cors} from "@elysiajs/cors";
 import {websocket} from "./websocket";
 import {chat} from "./chat";
+import {todo} from "./todo";
 
 export const app = new Elysia()
   .use(cors())
   .use(swagger())
   .use(websocket)
   .use(chat)
-  .post(
-    "/todo",
-    ({body}) => {
-      app.server?.publish?.(
-        "lobby",
-        JSON.stringify({type: "todo", data: body.todo, channel: "lobby"})
-      );
-      return {status: "ok"};
-    },
-    {
-      body: t.Object({
-        todo: t.String(),
-      }),
-    }
-  )
-
+  .use(todo)
   .listen(3000);
 
 console.log(`🦊 Elysia is running at http://localhost:3000`);
