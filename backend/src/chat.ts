@@ -1,13 +1,31 @@
 import {Elysia, t} from "elysia";
-import {app} from "./index";
+import {app, wsService} from "./index";
 
-export const chat = new Elysia().post(
+class Chat {
+  data: string[] = [];
+
+  add(message: string) {
+    this.data.push(message);
+  }
+
+  get() {
+    return this.data;
+  }
+
+  clear() {
+    this.data = [];
+  }
+}
+
+export const chat = new Elysia().decorate("chat", new Chat()).post(
   "/chat",
-  ({body}) => {
-    app.server?.publish?.(
-      "lobby",
-      JSON.stringify({type: "chat", data: body.message, channel: "lobby"})
-    );
+  ({body: {message}, chat}) => {
+    chat.add(message);
+    wsService.broadcast("lobby", {
+      type: "chat",
+      data: message,
+      channel: "lobby",
+    });
     return {status: "ok"};
   },
   {

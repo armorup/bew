@@ -1,13 +1,14 @@
 import Elysia, {t} from "elysia";
-import {app} from ".";
+import {wsService} from ".";
 
 export const todo = new Elysia().post(
   "/todo",
-  ({body}) => {
-    app.server?.publish?.(
-      "lobby",
-      JSON.stringify({type: "todo", data: body.todo, channel: "lobby"})
-    );
+  ({body: {todo}}) => {
+    wsService.broadcast("lobby", {
+      type: "todo",
+      data: todo,
+      channel: "lobby",
+    });
     return {status: "ok"};
   },
   {

@@ -1,9 +1,5 @@
 import Elysia, {t} from "elysia";
-import {
-  wsRequestSchema,
-  wsQuerySchema,
-  wsResponseSchema,
-} from "../../shared/models";
+import {wsRequestSchema, wsResponseSchema, wsQuerySchema} from "./ws-service";
 
 export const websocket = new Elysia().ws("/ws", {
   body: wsRequestSchema,
