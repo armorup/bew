@@ -21,10 +21,10 @@ export const chat = new Elysia().decorate("chat", new Chat()).post(
   "/chat",
   ({body: {message}, chat}) => {
     chat.add(message);
-    wsService.broadcast("lobby", {
+    wsService.broadcast({
+      channel: "lobby",
       type: "chat",
       data: message,
-      channel: "lobby",
     });
     return {status: "ok"};
   },

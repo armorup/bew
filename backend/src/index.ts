@@ -1,10 +1,9 @@
 import {Elysia, t} from "elysia";
 import {swagger} from "@elysiajs/swagger";
 import {cors} from "@elysiajs/cors";
-import {websocket} from "./websocket";
+import {websocket, WebSocketService} from "./websocket";
 import {chat} from "./chat";
 import {todo} from "./todo";
-import {WebSocketService} from "./ws-service";
 
 export const app = new Elysia()
   .use(cors())

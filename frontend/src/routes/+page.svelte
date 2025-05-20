@@ -3,11 +3,17 @@
 <script lang="ts">
   import { api } from '$lib/eden-client'
   
-  let messages: string[] = []
-  let todos: string[] = []
-  let todo = ''
-  let message = ''
-  let channel : string | null = 'lobby'
+  let payload = {
+      type: 'chat',
+      data: {
+        message: '',
+        todo: ''
+      },
+    channel: 'lobby',
+  };
+  let messages: string[] = [];
+  let todos: string[] = [];
+  
   let ws: ReturnType<typeof api['ws']['subscribe']> | null = null
 
   function connect() {
@@ -18,7 +24,7 @@
     })
 
     ws.subscribe((message) => {
-      let {type, data, channel} = message.data
+      let {channel,type, data} = message.data
       console.log(type, data, channel)
       
       if (type === 'todo') {
@@ -34,16 +40,18 @@
   }
 
   function sendMessage() {
+    let message = payload.data.message
     if (message.trim()) {
       api.chat.post({ message })
-      message = ''
+      payload.data.message = ''
     }
   }
 
   async function sendTodo() {
+    let todo = payload.data.todo
     if (todo.trim()) {
       await api.todo.post({ todo })
-      todo = ''
+      payload.data.todo = ''
     }
   }
 </script>
@@ -56,7 +64,7 @@
       <div class="message">{msg}</div>
     {/each}
     
-    <input bind:value={message} />
+    <input bind:value={payload.data.message} />
     <button on:click={() => sendMessage()}>Send</button>
   </div>
 {/if}
@@ -75,6 +83,6 @@
 
 <!-- Add todo input and button below chat -->
 <div class="todo">
-  <input placeholder="Add a todo..." bind:value={todo} />
+  <input placeholder="Add a todo..." bind:value={payload.data.todo} />
   <button on:click={sendTodo}>Add Todo</button>
 </div>
