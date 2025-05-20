@@ -2,6 +2,8 @@
  
 <script lang="ts">
   import { api, type WsSchema } from '$lib/shared.js'
+  import { browser } from '$app/environment'
+  import { onMount } from 'svelte'
   
   let messages: string[] = [];
   let todos: string[] = [];
@@ -10,12 +12,42 @@
   let todoInput = '';
   let ws: ReturnType<typeof api['ws']['subscribe']> | null = null
 
-  function connect() {
-    ws = api.ws.subscribe()
+  let playerId = getCookie('playerId')
+  let playerName = getCookie('playerName');
+
+  async function ensureUser() {
+    playerId = getCookie('playerId');
+    playerName = getCookie('playerName');
+    if (!playerId || !playerName) {
+      try {
+        const res = await api.user.guest.get();
+        if (!res) throw new Error('Failed to fetch user');
+        const data =  res.data;
+        if (! data || !data.id || !data.name) throw new Error('Invalid user data');
+        playerId = data.id;
+        playerName = data.name;
+        setCookie('playerId', playerId!);
+        setCookie('playerName', playerName!);
+      } catch (err) {
+        // Handle error: show message, prevent connect, etc.
+        alert('Unable to create user. Please try again later.');
+        throw err; // Or set an error state variable
+      }
+    }
+  }
+
+  async function connect() {
+    try {
+      await ensureUser();
+    } catch {
+      // Optionally set an error state to show in the UI
+      return;
+    }
+    ws = api.ws.subscribe();
 
     ws.on('open', () => {
-      console.log('Connected to chat room')
-    })
+      console.log('Connected to chat room as', playerName, playerId);
+    });
 
     ws.subscribe((message) => {
       let {channel,type, data} = message.data
@@ -46,9 +78,40 @@
       todoInput = ''
     }
   }
+
+  function setCookie(name: string, value: string, days = 365) {
+    if (!browser) return;
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+  }
+
+  function getCookie(name: string) {
+    if (!browser) return undefined;
+    const value = document.cookie
+      .split('; ')
+      .find(row => row.startsWith(name + '='))
+      ?.split('=')[1];
+    return value ? decodeURIComponent(value) : undefined;
+  }
+
+  function clearCookie(name: string) {
+    if (!browser) return;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
+
+  onMount(() => {
+    // Safe to use document/cookies here
+    playerId = getCookie('playerId');
+    playerName = getCookie('playerName');
+    connect()
+    console.log(playerId, playerName)
+  });
 </script>
 
-<button on:click={connect}>Join Chat</button>
+<h1>CYOA</h1>
+<h2>{playerName}</h2>
+
+<!-- <button on:click={connect}>Join Chat</button> -->
 
 {#if ws}
   <div class="chat">

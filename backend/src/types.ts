@@ -1,2 +1,2 @@
-export {App} from "./index";
-export {WsSchema} from "./websocket";
+export { App } from './index'
+export { WsSchema } from './websocket'
