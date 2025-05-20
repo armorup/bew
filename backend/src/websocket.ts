@@ -1,41 +1,43 @@
 import Elysia, {t} from "elysia";
 import {wsService} from ".";
 
-export const MessageEnum = {
+//------- Schema and types -------
+const MessageEnum = {
   chat: "chat",
   todo: "todo",
 } as const;
 
-const wsBodySchema = t.Object({
-  channel: t.Optional(t.String({default: "lobby"})),
-  type: t.Enum(MessageEnum),
-  data: t.Optional(t.String({default: ""})),
-});
+const wsSchema = {
+  body: t.Object({
+    channel: t.String(),
+    type: t.Enum(MessageEnum),
+    data: t.String(),
+  }),
+  response: t.Object({
+    channel: t.String(),
+    type: t.Enum(MessageEnum),
+    data: t.String(),
+  }),
+  query: t.Object({
+    channel: t.Optional(t.String({default: "lobby"})),
+  }),
+} as const;
 
-const wsResponseSchema = t.Object({
-  channel: t.String(),
-  type: t.Enum(MessageEnum),
-  data: t.String(),
-});
+export type WsSchema = typeof wsSchema.body.static;
 
-const wsQuerySchema = t.Object({
-  channel: t.Optional(t.String({default: "lobby"})),
-});
-
-type broadcastPayloadSchema = typeof wsResponseSchema.static;
-
+//------- WebSocket Service -------
 export class WebSocketService {
   constructor(private server: Elysia["server"]) {}
 
-  broadcast(payload: broadcastPayloadSchema) {
+  broadcast(payload: typeof wsSchema.body.static) {
     this.server?.publish?.(payload.channel, JSON.stringify(payload));
   }
 }
 
 export const websocket = new Elysia().ws("/ws", {
-  body: wsBodySchema,
-  response: wsResponseSchema,
-  query: wsQuerySchema,
+  body: wsSchema.body,
+  response: wsSchema.response,
+  query: wsSchema.query,
   open(ws) {
     const channel = ws.data?.query.channel || "lobby";
     ws.subscribe(channel);

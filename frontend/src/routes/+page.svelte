@@ -1,19 +1,13 @@
 <!-- Client (Svelte) -->
  
 <script lang="ts">
-  import { api } from '$lib/eden-client'
+  import { api, type WsSchema } from '$lib/shared.js'
   
-  let payload = {
-      type: 'chat',
-      data: {
-        message: '',
-        todo: ''
-      },
-    channel: 'lobby',
-  };
   let messages: string[] = [];
   let todos: string[] = [];
   
+  let chatInput = '';
+  let todoInput = '';
   let ws: ReturnType<typeof api['ws']['subscribe']> | null = null
 
   function connect() {
@@ -29,7 +23,7 @@
       
       if (type === 'todo') {
         todos = [...todos, data]
-      } else {
+      } else if (type === 'chat') {
         messages = [...messages, data]
       }
     })
@@ -40,18 +34,16 @@
   }
 
   function sendMessage() {
-    let message = payload.data.message
-    if (message.trim()) {
-      api.chat.post({ message })
-      payload.data.message = ''
+    if (chatInput.trim()) {
+      api.chat.post({ message: chatInput })
+      chatInput = ''
     }
   }
 
   async function sendTodo() {
-    let todo = payload.data.todo
-    if (todo.trim()) {
-      await api.todo.post({ todo })
-      payload.data.todo = ''
+    if (todoInput.trim()) {
+      await api.todo.post({ todo: todoInput })
+      todoInput = ''
     }
   }
 </script>
@@ -64,7 +56,7 @@
       <div class="message">{msg}</div>
     {/each}
     
-    <input bind:value={payload.data.message} />
+    <input bind:value={chatInput} />
     <button on:click={() => sendMessage()}>Send</button>
   </div>
 {/if}
@@ -83,6 +75,6 @@
 
 <!-- Add todo input and button below chat -->
 <div class="todo">
-  <input placeholder="Add a todo..." bind:value={payload.data.todo} />
+  <input placeholder="Add a todo..." bind:value={todoInput} />
   <button on:click={sendTodo}>Add Todo</button>
 </div>
