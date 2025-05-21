@@ -9,13 +9,10 @@
 <h1>CYOA</h1>
 <h2>{$playerName || 'Loading...'}</h2>
 
-<!-- Include the realtime connection component -->
-<RealtimeConnection showStatus={true} />
+<RealtimeConnection showStatus={false} />
 
-<!-- Chat component -->
 <Chat />
 
-<!-- Todo list component -->
 <TodoList />
 
 <style>
@@ -23,10 +20,14 @@
     font-size: 2rem;
     margin-bottom: 0.5rem;
   }
-  
   h2 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     color: #555;
+  }
+
+  /* Add page padding */
+  :global(body) {
+    padding: 1rem;
   }
 </style>

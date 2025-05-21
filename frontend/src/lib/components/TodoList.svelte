@@ -30,7 +30,7 @@
         placeholder="Add a todo..." 
         on:keydown={(e) => e.key === 'Enter' && handleAddTodo()}
       />
-      <button on:click={handleAddTodo}>Add Todo</button>
+      <button on:click={handleAddTodo}>Add</button>
     </div>
   {:else}
     <div class="connecting">Connecting...</div>
@@ -73,7 +73,7 @@
   input {
     flex: 1;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 4px;
     margin-right: 0.5rem;
   }

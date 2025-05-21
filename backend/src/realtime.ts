@@ -1,5 +1,4 @@
 import Elysia, { t } from 'elysia'
-import { wsService } from '.'
 
 //------- Schema and types -------
 const MessageEnum = {
@@ -7,7 +6,7 @@ const MessageEnum = {
   todo: 'todo',
 } as const
 
-const wsSchema = {
+const messageSchema = {
   body: t.Object({
     channel: t.String(),
     type: t.Enum(MessageEnum),
@@ -23,23 +22,23 @@ const wsSchema = {
   }),
 } as const
 
-export type WsSchema = typeof wsSchema.body.static
+export type MessageSchema = typeof messageSchema.body.static
 
 //------- WebSocket Service -------
-export class WebSocketService {
+export class Realtime {
   private onlineUsers: Record<string, string> = {} // {id: name}
 
   constructor(private server: Elysia['server']) {}
 
-  broadcast(message: typeof wsSchema.body.static) {
+  broadcast(message: typeof messageSchema.body.static) {
     this.server?.publish?.(message.channel, JSON.stringify(message))
   }
 }
 
 export const websocket = new Elysia().ws('/ws', {
-  body: wsSchema.body,
-  response: wsSchema.response,
-  query: wsSchema.query,
+  body: messageSchema.body,
+  response: messageSchema.response,
+  query: messageSchema.query,
   open(ws) {
     const { playerId } = ws.data?.query || {}
     ws.subscribe('lobby')

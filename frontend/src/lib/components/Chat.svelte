@@ -66,7 +66,7 @@
   input {
     flex: 1;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 4px;
     margin-right: 0.5rem;
   }
