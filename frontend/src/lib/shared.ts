@@ -1,5 +1,4 @@
-import { treaty } from '@elysiajs/eden';
-import type { App, WsSchema } from '../../../backend/src/types.js';
+import { treaty } from '@elysiajs/eden'
+import type { App, MessageSchema } from '../../../backend/src/types.js'
 
-export type { WsSchema };
-export const api = treaty<App>('http://localhost:3000');
+export const api = treaty<App>('http://localhost:3000')

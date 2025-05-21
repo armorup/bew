@@ -1,15 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { playerName } from '$lib/stores/RealtimeStore';
+  import { goto } from '$app/navigation';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
   import Chat from '$lib/components/Chat.svelte';
   import TodoList from '$lib/components/TodoList.svelte';
+  
+  function startGame() {
+    goto('/game');
+  }
 </script>
 
-<h1>Lobby</h1>
+<h1>Chat Room</h1>
 <h2>{$playerName || 'Loading...'}</h2>
 
 <RealtimeConnection showStatus={true} />
+
+<div class="lobby-actions">
+  <button class="start-game-btn" onclick={startGame}>Start Adventure Game</button>
+</div>
 
 <div class="lobby-container">
   <Chat />
@@ -34,6 +43,28 @@
     gap: 2rem;
     max-width: 800px;
     margin: 0 auto;
+  }
+  
+  .lobby-actions {
+    margin: 1rem 0;
+    text-align: center;
+  }
+  
+  .start-game-btn {
+    background-color: #ff5722;
+    color: white;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .start-game-btn:hover {
+    background-color: #e64a19;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   @media (min-width: 768px) {

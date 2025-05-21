@@ -1,2 +1,2 @@
-export { App } from './index'
-export { MessageSchema as WsSchema } from './realtime'
+export type { App } from './index'
+export type { MessageSchema } from './realtime'

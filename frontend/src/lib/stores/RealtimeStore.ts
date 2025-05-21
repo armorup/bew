@@ -34,6 +34,18 @@ export const playerName = writable<string | undefined>(
 )
 export const error = writable<string | null>(null)
 
+// Game-related stores
+export const gamePlayers = writable<Array<{ id: string; name: string; vote: string | null }>>([])
+export const currentScene = writable({
+	id: '1',
+	text: 'You are at the entrance to a dark cave. A cool breeze flows from the darkness within.',
+	options: [
+		{ id: 'option1', text: 'Enter the cave cautiously' },
+		{ id: 'option2', text: 'Look for another way around' },
+		{ id: 'option3', text: 'Set up camp outside and wait for daylight' }
+	]
+})
+
 // Websocket reference
 let ws: ReturnType<(typeof api)['ws']['subscribe']> | null = null
 
@@ -53,8 +65,8 @@ async function ensureUser(): Promise<boolean> {
 			currentPlayerId = data.id
 			currentPlayerName = data.name
 
-			setCookie('playerId', currentPlayerId)
-			setCookie('playerName', currentPlayerName)
+			setCookie('playerId', currentPlayerId!)
+			setCookie('playerName', currentPlayerName!)
 
 			playerId.set(currentPlayerId)
 			playerName.set(currentPlayerName)

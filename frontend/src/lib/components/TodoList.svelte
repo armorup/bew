@@ -13,7 +13,7 @@
 </script>
 
 <div class="todo-container">
-  <h3>Todos</h3>
+  <h3>Todo</h3>
   
   {#if $connected}
     <ul class="todos">

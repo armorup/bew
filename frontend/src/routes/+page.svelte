@@ -7,6 +7,10 @@
   function navigateToLobby() {
     goto('/lobby');
   }
+  
+  function navigateToGame() {
+    goto('/game');
+  }
 </script>
 
 <h1>Choose Your Own Adventure</h1>
@@ -16,7 +20,10 @@
 
 <div class="home-container">
   <p>Join the adventure and collaborate with other players!</p>
-  <button onclick={navigateToLobby}>Enter Lobby</button>
+  <div class="button-group">
+    <button class="primary-btn" onclick={navigateToLobby}>Enter Lobby</button>
+    <button class="secondary-btn" onclick={navigateToGame}>Play Game</button>
+  </div>
 </div>
 
 <style>
@@ -42,19 +49,37 @@
     font-size: 1.2rem;
   }
   
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+  
   button {
     padding: 0.75rem 2rem;
-    background-color: #4a86e8;
-    color: white;
     font-size: 1.1rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
   }
   
-  button:hover {
+  .primary-btn {
+    background-color: #4a86e8;
+    color: white;
+  }
+  
+  .primary-btn:hover {
     background-color: #3a76d8;
+  }
+  
+  .secondary-btn {
+    background-color: #ff5722;
+    color: white;
+  }
+  
+  .secondary-btn:hover {
+    background-color: #e64a19;
   }
 
   /* Add page padding */
