@@ -6,7 +6,6 @@
   import TodoList from '$lib/components/TodoList.svelte';
 </script>
 
-<h1>CYOA</h1>
 <h2>{$playerName || 'Loading...'}</h2>
 
 <RealtimeConnection showStatus={false} />
@@ -16,18 +15,10 @@
 <TodoList />
 
 <style>
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
   h2 {
     font-size: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.2rem;
     color: #555;
   }
 
-  /* Add page padding */
-  :global(body) {
-    padding: 1rem;
-  }
 </style>

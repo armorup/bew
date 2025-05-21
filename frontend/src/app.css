@@ -1,3 +1,6 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
+/* Optional: If you use plugins, import them as normal CSS files, not with @plugin */
+@import "@tailwindcss/forms";
+@import "@tailwindcss/typography";
