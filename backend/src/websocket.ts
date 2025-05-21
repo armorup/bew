@@ -19,7 +19,7 @@ const wsSchema = {
     data: t.String(),
   }),
   query: t.Object({
-    channel: t.Optional(t.String({ default: 'lobby' })),
+    playerId: t.Optional(t.String()),
   }),
 } as const
 
@@ -27,10 +27,12 @@ export type WsSchema = typeof wsSchema.body.static
 
 //------- WebSocket Service -------
 export class WebSocketService {
+  private onlineUsers: Record<string, string> = {} // {id: name}
+
   constructor(private server: Elysia['server']) {}
 
-  broadcast(payload: typeof wsSchema.body.static) {
-    this.server?.publish?.(payload.channel, JSON.stringify(payload))
+  broadcast(message: typeof wsSchema.body.static) {
+    this.server?.publish?.(message.channel, JSON.stringify(message))
   }
 }
 
@@ -39,13 +41,8 @@ export const websocket = new Elysia().ws('/ws', {
   response: wsSchema.response,
   query: wsSchema.query,
   open(ws) {
-    const channel = ws.data?.query.channel || 'lobby'
-    ws.subscribe(channel)
-    wsService.broadcast({
-      channel,
-      type: MessageEnum.chat,
-      data: 'New user joined!',
-    })
+    const { playerId } = ws.data?.query || {}
+    ws.subscribe('lobby')
   },
   message(ws, message) {},
 })
