@@ -1,29 +1,60 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { playerName } from '$lib/stores/RealtimeStore';
+  import { goto } from '$app/navigation';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
-  import Chat from '$lib/components/Chat.svelte';
-  import TodoList from '$lib/components/TodoList.svelte';
+  
+  function navigateToLobby() {
+    goto('/lobby');
+  }
 </script>
 
-<h1>CYOA</h1>
-<h2>{$playerName || 'Loading...'}</h2>
+<h1>Choose Your Own Adventure</h1>
+<h2>Welcome, {$playerName || 'Guest'}!</h2>
 
 <RealtimeConnection showStatus={false} />
 
-<Chat />
-
-<TodoList />
+<div class="home-container">
+  <p>Join the adventure and collaborate with other players!</p>
+  <button onclick={navigateToLobby}>Enter Lobby</button>
+</div>
 
 <style>
   h1 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
   }
+  
   h2 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     color: #555;
+  }
+
+  .home-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: center;
+  }
+  
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+  }
+  
+  button {
+    padding: 0.75rem 2rem;
+    background-color: #4a86e8;
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  button:hover {
+    background-color: #3a76d8;
   }
 
   /* Add page padding */
