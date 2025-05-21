@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia'
-import { wsService } from './index'
+import { wsService } from '../index'
 
 class Chat {
   data: string[] = []

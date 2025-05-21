@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { playerName } from '$lib/stores/RealtimeStore';
   import { goto } from '$app/navigation';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
@@ -19,7 +18,7 @@
 <RealtimeConnection showStatus={false} />
 
 <div class="home-container">
-  <p>Join the adventure and collaborate with other players!</p>
+  <p>Join the adventure!</p>
   <div class="button-group">
     <button class="primary-btn" onclick={navigateToLobby}>Enter Lobby</button>
     <button class="secondary-btn" onclick={navigateToGame}>Play Game</button>

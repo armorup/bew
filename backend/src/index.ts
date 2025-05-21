@@ -1,15 +1,17 @@
 import { Elysia, t } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
-import { websocket, Realtime } from './realtime'
-import { chat } from './chat'
-import { todo } from './todo'
+import { websocket, Realtime } from './realtime/realtime'
+import { chat } from './lobby/chat'
+import { todo } from './lobby/todo'
 import { user } from './user'
+import { game } from './game/game'
 export const app = new Elysia()
   .use(cors())
   .use(swagger())
   .use(user)
   .use(websocket)
+  .use(game)
   .use(chat)
   .use(todo)
   .listen(3000)

@@ -1,5 +1,5 @@
 import Elysia, { t } from 'elysia'
-import { wsService } from '.'
+import { wsService } from '..'
 
 export const todo = new Elysia().post(
   '/todo',

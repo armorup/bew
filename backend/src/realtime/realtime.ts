@@ -1,28 +1,5 @@
 import Elysia, { t } from 'elysia'
-
-//------- Schema and types -------
-const MessageEnum = {
-  chat: 'chat',
-  todo: 'todo',
-} as const
-
-const messageSchema = {
-  body: t.Object({
-    channel: t.String(),
-    type: t.Enum(MessageEnum),
-    data: t.String(),
-  }),
-  response: t.Object({
-    channel: t.String(),
-    type: t.Enum(MessageEnum),
-    data: t.String(),
-  }),
-  query: t.Object({
-    playerId: t.Optional(t.String()),
-  }),
-} as const
-
-export type MessageSchema = typeof messageSchema.body.static
+import { messageSchema } from './types'
 
 //------- WebSocket Service -------
 export class Realtime {
