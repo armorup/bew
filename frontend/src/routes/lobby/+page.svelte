@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { playerName } from '$lib/stores/RealtimeStore';
+  import { player } from '$lib/util/shared.svelte';
   import { goto } from '$app/navigation';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
   import Chat from '$lib/components/Chat.svelte';
@@ -12,7 +12,7 @@
 </script>
 
 <h1>Chat Room</h1>
-<h2>{$playerName || 'Loading...'}</h2>
+<h2>{player.name || 'Loading...'}</h2>
 
 <RealtimeConnection showStatus={true} />
 

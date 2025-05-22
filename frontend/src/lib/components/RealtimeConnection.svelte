@@ -2,12 +2,10 @@
   import { onMount, onDestroy } from 'svelte';
   import { 
     connect, 
-    disconnect, 
-    connected, 
-    playerId, 
-    playerName, 
-    error
-  } from '$lib/stores/RealtimeStore';
+    
+  } from '$lib/util/realtime';
+  import { connection } from '$lib/util/shared.svelte';
+  import { player } from '$lib/util/shared.svelte';
 
   export let showStatus = false;
 
@@ -27,10 +25,10 @@
 
 {#if showStatus}
   <div class="realtime-status">
-    {#if $connected}
-      <div class="status-connected">Connected as {$playerName} ({$playerId})</div>
-    {:else if $error}
-      <div class="status-error">{$error}</div>
+    {#if connection.connected}
+      <div class="status-connected">Connected as {player.name} ({player.id})</div>
+    {:else if connection.error}
+      <div class="status-error">{connection.error}</div>
     {:else}
       <div class="status-connecting">Connecting...</div>
     {/if}

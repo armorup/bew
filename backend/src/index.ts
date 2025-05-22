@@ -6,9 +6,11 @@ import { chat } from './lobby/chat'
 import { todo } from './lobby/todo'
 import { user } from './user'
 import { game } from './game/game'
-export const app = new Elysia()
+
+const app = new Elysia()
   .use(cors())
   .use(swagger())
+  .get('/', () => 'Hello.')
   .use(user)
   .use(websocket)
   .use(game)

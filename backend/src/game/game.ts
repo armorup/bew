@@ -1,10 +1,10 @@
-declare var Bun: any
 import { Elysia, t } from 'elysia'
 import { type Story, type Scene } from './types'
+import stories from './stories.json'
 
-// Bun: get path to stories.json
-const storiesPath = new URL('./stories.json', import.meta.url).pathname
-const stories: Story[] = JSON.parse(await Bun.file(storiesPath).text())
+// Load stories using Bun's file API
+// const storiesPath = new URL('./stories.json', import.meta.url).pathname
+// const stories: Story[] = await Bun.file(storiesPath).json()
 const story = stories[0] // Assume single story for now
 
 // Game state
@@ -44,11 +44,13 @@ class Game {
 
   progressScene() {
     if (!this.allPlayersVoted()) return
+
     // Tally votes
     const tally: Record<string, number> = {}
     for (const choiceId of Object.values(this.votes)) {
       tally[choiceId] = (tally[choiceId] || 0) + 1
     }
+
     // Find majority
     let max = 0
     let selectedChoiceId = ''
@@ -58,6 +60,7 @@ class Game {
         selectedChoiceId = choiceId
       }
     }
+
     // Move to next scene
     const currentScene = this.getCurrentScene()
     const selectedChoice = currentScene.choices.find(

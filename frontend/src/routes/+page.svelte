@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { playerName } from '$lib/stores/RealtimeStore';
+  import { realtime } from '$lib/util/realtime';
+  import { player } from '$lib/util/shared.svelte';
   import { goto } from '$app/navigation';
-  import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
+  // import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
   
   function navigateToLobby() {
     goto('/lobby');
@@ -13,9 +14,9 @@
 </script>
 
 <h1>Choose Your Own Adventure</h1>
-<h2>Welcome, {$playerName || 'Guest'}!</h2>
+  <h2>Welcome, {player.name || 'Guest'}!</h2>
 
-<RealtimeConnection showStatus={false} />
+<!-- <RealtimeConnection showStatus={false} /> -->
 
 <div class="home-container">
   <p>Join the adventure!</p>

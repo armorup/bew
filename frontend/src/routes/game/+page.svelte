@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { connected, playerName, playerId } from '$lib/stores/RealtimeStore';
+  import { player } from '$lib/util/shared.svelte';
+  import { game } from '$lib/util/game';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
-  import { api } from '$lib/shared';
+  import { api } from '$lib/elysia';
   
   // Define types
   type OptionId = string;
@@ -42,12 +43,7 @@
   // Scene history tracking
   let sceneHistory = $state<SceneHistoryEntry[]>([]);
   
-  // Mock data for prototype
-  let players = $state<Player[]>([
-    { id: '1', name: 'Player 1', vote: null },
-    { id: '2', name: 'Player 2', vote: 'option1' },
-    { id: '3', name: 'Player 3', vote: 'option2' }
-  ]);
+  
   
   let currentScene = $state<GameScene>({
     id: '1',
@@ -68,27 +64,27 @@
     userVote = optionId;
     
     // Find current player and update their vote
-    const currentPlayerId: string | undefined = $playerId;
+    const currentPlayerId: string | undefined = player.id;
     if (currentPlayerId) {
-      const playerIndex: number = players.findIndex(p => p.id === currentPlayerId);
+      const playerIndex: number = game.players.findIndex(p => p.id === currentPlayerId);
       
       if (playerIndex !== -1) {
         // Update existing player's vote
-        players[playerIndex].vote = optionId;
+        game.players[playerIndex].vote = optionId;
       } else {
         // Add new player to the game
         const newPlayer: Player = {
           id: currentPlayerId,
-          name: $playerName || 'Guest',
+          name: player.name || 'Guest',
           vote: optionId
         };
         
-        players = [...players, newPlayer];
+        game.players = [...game.players, newPlayer];
       }
       
       // In a real implementation, we would send this vote to the backend
       // For prototype, we'll just simulate it with a console message
-      console.log(`Vote sent: ${optionId} by player ${$playerName} (${currentPlayerId})`);
+      console.log(`Vote sent: ${optionId} by player ${player.name} (${currentPlayerId})`);
       
       // This would be the actual API call in a fully implemented version:
       // api.game.vote.post({ 
@@ -100,7 +96,7 @@
   
   // Calculate votes for each option
   function getVotesForOption(optionId: OptionId): number {
-    return players.filter(player => player.vote === optionId).length;
+    return game.players.filter(player => player.vote === optionId).length;
   }
   
   // Function to determine winning option
@@ -153,7 +149,7 @@
     currentScene = newScene;
     
     // Reset players' votes
-    players = players.map(player => ({ ...player, vote: null }));
+    game.players = game.players.map(player => ({ ...player, vote: null }));
     userVote = null;
     
     // Restart countdown
@@ -227,9 +223,9 @@
   // Initialize game
   onMount((): (() => void) => {
     // Insert the current player into the players list
-    if ($playerId && $playerName) {
-      if (!players.some(p => p.id === $playerId)) {
-        players = [...players, { id: $playerId, name: $playerName, vote: null }];
+    if (player && player.name) {
+      if (!game.players.some(p => p.id === player.id)) {
+        game.players = [...game.players, { id: player.id, name: player.name, vote: null }];
       }
     }
     
@@ -270,8 +266,9 @@
         <h3>What will you do?</h3>
         <div class="options-grid">
           {#each currentScene.options as option}
-            <div 
-              class="option {userVote === option.id ? 'selected' : ''}" 
+            <button
+              type="button"
+              class="option {userVote === option.id ? 'selected' : ''}"
               onclick={() => vote(option.id)}
             >
               <div class="option-content">
@@ -281,12 +278,12 @@
                   <div class="vote-bar">
                     <div 
                       class="vote-bar-progress" 
-                      style="width: {players.length > 0 ? (getVotesForOption(option.id) / players.length) * 100 : 0}%"
+                      style="width: {game.players.length > 0 ? (getVotesForOption(option.id) / game.players.length) * 100 : 0}%"
                     ></div>
                   </div>
                 </div>
               </div>
-            </div>
+            </button>
           {/each}
         </div>
       </div>
@@ -294,10 +291,10 @@
     
     <aside class="sidebar">
       <div class="players-panel panel">
-        <h3>Players ({players.length})</h3>
+        <h3>Players ({game.players.length})</h3>
         <ul class="player-list">
-          {#each players as player}
-            <li class={player.id === $playerId ? 'current-player' : ''}>
+          {#each game.players as player}
+            <li class={player.id === player.id ? 'current-player' : ''}>
               <span class="player-name">{player.name}</span>
               {#if player.vote}
                 <span class="player-voted">✓ Voted</span>

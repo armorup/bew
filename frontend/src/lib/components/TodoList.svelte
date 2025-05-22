@@ -1,12 +1,13 @@
 <!-- src/lib/components/TodoList.svelte -->
 <script lang="ts">
-  import { connected, todos, sendTodo } from '$lib/stores/RealtimeStore';
+  import { realtime } from '$lib/util/realtime';
+  import { connection, lobby } from '$lib/util/shared.svelte';
   
   let todoInput = '';
   
   async function handleAddTodo() {
     if (todoInput.trim()) {
-      await sendTodo(todoInput);
+      await realtime.sendTodo(todoInput);
       todoInput = '';
     }
   }
@@ -15,9 +16,9 @@
 <div class="todo-container">
   <h3>Todo</h3>
   
-  {#if $connected}
+  {#if connection.connected}
     <ul class="todos">
-      {#each $todos as todo}
+      {#each lobby.todos as todo}
         <li>{todo}</li>
       {:else}
         <li class="empty">No todos yet</li>
