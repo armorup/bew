@@ -19,7 +19,7 @@ export const player = $state<Player>({
 	vote: null
 })
 
-export const game = $state({
+export const gameState = $state({
 	players: [] as Array<Player>,
 	scene: {
 		id: '1',

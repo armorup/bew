@@ -1,7 +1,7 @@
 <!-- src/lib/components/TodoList.svelte -->
 <script lang="ts">
-  import { realtime } from '$lib/util/realtime';
-  import { connection, lobby } from '$lib/util/shared.svelte';
+  import { realtime } from '$lib/realtime';
+  import { connection, lobby } from '$lib/shared.svelte';
   
   let todoInput = '';
   

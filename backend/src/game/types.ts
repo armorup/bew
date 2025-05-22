@@ -4,7 +4,6 @@ import { t } from 'elysia'
 export const choiceSchema = t.Object({
   id: t.String(),
   text: t.String(),
-  nextSceneId: t.String().optional(),
 })
 type Choice = typeof choiceSchema.static
 
@@ -22,4 +21,5 @@ export const storySchema = t.Object({
   title: t.String(),
   scenes: t.Array(sceneSchema),
 })
+
 export type Story = typeof storySchema.static

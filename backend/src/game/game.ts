@@ -2,9 +2,6 @@ import { Elysia, t } from 'elysia'
 import { type Story, type Scene } from './types'
 import stories from './stories.json'
 
-// Load stories using Bun's file API
-// const storiesPath = new URL('./stories.json', import.meta.url).pathname
-// const stories: Story[] = await Bun.file(storiesPath).json()
 const story = stories[0] // Assume single story for now
 
 // Game state
@@ -66,8 +63,9 @@ class Game {
     const selectedChoice = currentScene.choices.find(
       (c) => c.id === selectedChoiceId
     )
-    if (selectedChoice && selectedChoice.nextSceneId) {
-      this.currentSceneId = selectedChoice.nextSceneId
+
+    if (selectedChoice) {
+      this.currentSceneId = selectedChoice.id
       this.votes = {} // Reset votes for next scene
     }
   }

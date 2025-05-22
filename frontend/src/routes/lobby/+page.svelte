@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { player } from '$lib/util/shared.svelte';
+  import { player } from '$lib/shared.svelte';
   import { goto } from '$app/navigation';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
   import Chat from '$lib/components/Chat.svelte';

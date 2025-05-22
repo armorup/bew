@@ -3,9 +3,9 @@
   import { 
     connect, 
     
-  } from '$lib/util/realtime';
-  import { connection } from '$lib/util/shared.svelte';
-  import { player } from '$lib/util/shared.svelte';
+  } from '$lib/realtime';
+  import { connection } from '$lib/shared.svelte';
+  import { player } from '$lib/shared.svelte';
 
   export let showStatus = false;
 

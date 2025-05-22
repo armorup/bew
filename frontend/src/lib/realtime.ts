@@ -3,7 +3,7 @@ import { api } from '$lib/elysia.js'
 import { browser } from '$app/environment'
 import { player, lobby, connection } from './shared.svelte'
 import { getCookie, setCookie, clearCookie } from './cookies'
-import { game, type Player } from './shared.svelte'
+import { gameState, type Player } from './shared.svelte'
 
 // Create reactive state class
 class Realtime {
@@ -123,7 +123,7 @@ class Realtime {
 
 	// Update game players
 	updateGamePlayers(players: Array<Player>) {
-		game.players = players
+		gameState.players = players
 	}
 
 	// Update current scene
@@ -132,7 +132,7 @@ class Realtime {
 		text: string
 		options: Array<{ id: string; text: string }>
 	}) {
-		game.scene = scene
+		gameState.scene = scene
 	}
 
 	// Logout user

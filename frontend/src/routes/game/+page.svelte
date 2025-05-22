@@ -1,9 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { player } from '$lib/util/shared.svelte';
-  import { game } from '$lib/util/game';
+  import { player, gameState } from '$lib/shared.svelte';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
-  import { api } from '$lib/elysia';
   
   // Define types
   type OptionId = string;
@@ -53,7 +51,7 @@
       { id: 'option2', text: 'Look for another way around' },
       { id: 'option3', text: 'Set up camp outside and wait for daylight' }
     ],
-    timeRemaining: 30 // Seconds
+    timeRemaining: 20 // Seconds
   });
   
   let userVote = $state<OptionId | null>(null);
@@ -66,11 +64,11 @@
     // Find current player and update their vote
     const currentPlayerId: string | undefined = player.id;
     if (currentPlayerId) {
-      const playerIndex: number = game.players.findIndex(p => p.id === currentPlayerId);
+      const playerIndex: number = gameState.players.findIndex(p => p.id === currentPlayerId);
       
       if (playerIndex !== -1) {
         // Update existing player's vote
-        game.players[playerIndex].vote = optionId;
+        gameState.players[playerIndex].vote = optionId;
       } else {
         // Add new player to the game
         const newPlayer: Player = {
@@ -79,7 +77,7 @@
           vote: optionId
         };
         
-        game.players = [...game.players, newPlayer];
+        gameState.players = [...gameState.players, newPlayer];
       }
       
       // In a real implementation, we would send this vote to the backend
@@ -96,7 +94,7 @@
   
   // Calculate votes for each option
   function getVotesForOption(optionId: OptionId): number {
-    return game.players.filter(player => player.vote === optionId).length;
+    return gameState.players.filter(player => player.vote === optionId).length;
   }
   
   // Function to determine winning option
@@ -143,13 +141,13 @@
       id: (parseInt(currentScene.id) + 1).toString(),
       text: nextSceneText,
       options: generateNextOptions(winningOptionId),
-      timeRemaining: 30
+      timeRemaining: 20
     };
     
     currentScene = newScene;
     
     // Reset players' votes
-    game.players = game.players.map(player => ({ ...player, vote: null }));
+    gameState.players = gameState.players.map(player => ({ ...player, vote: null }));
     userVote = null;
     
     // Restart countdown
@@ -224,8 +222,8 @@
   onMount((): (() => void) => {
     // Insert the current player into the players list
     if (player && player.name) {
-      if (!game.players.some(p => p.id === player.id)) {
-        game.players = [...game.players, { id: player.id, name: player.name, vote: null }];
+      if (!gameState.players.some(p => p.id === player.id)) {
+        gameState.players = [...gameState.players, { id: player.id, name: player.name, vote: null }];
       }
     }
     
@@ -278,7 +276,7 @@
                   <div class="vote-bar">
                     <div 
                       class="vote-bar-progress" 
-                      style="width: {game.players.length > 0 ? (getVotesForOption(option.id) / game.players.length) * 100 : 0}%"
+                      style="width: {gameState.players.length > 0 ? (getVotesForOption(option.id) / gameState.players.length) * 100 : 0}%"
                     ></div>
                   </div>
                 </div>
@@ -291,9 +289,9 @@
     
     <aside class="sidebar">
       <div class="players-panel panel">
-        <h3>Players ({game.players.length})</h3>
+        <h3>Players ({gameState.players.length})</h3>
         <ul class="player-list">
-          {#each game.players as player}
+          {#each gameState.players as player}
             <li class={player.id === player.id ? 'current-player' : ''}>
               <span class="player-name">{player.name}</span>
               {#if player.vote}
