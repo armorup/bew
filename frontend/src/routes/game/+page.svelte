@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { player, gameState } from '$lib/stores/game.svelte';
-  import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
+  import { player, gameState } from '$lib/util/game.svelte';
+  import RealtimeConnection from '$lib/components/Network.svelte';
   
   // Define types
   type OptionId = string;

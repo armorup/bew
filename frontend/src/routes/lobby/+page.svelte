@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { player } from '$lib/stores/game.svelte';
+  import { player } from '$lib/util/game.svelte';
   import { goto } from '$app/navigation';
-  import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
-  import Chat from '$lib/components/Chat.svelte';
-  import TodoList from '$lib/components/TodoList.svelte';
+  import Network from '$lib/components/Network.svelte';
+  import Chat from './Chat.svelte';
+  import TodoList from './TodoList.svelte';
   
   function startGame() {
     goto('/game');
@@ -13,7 +13,7 @@
 <h1>Chat Room</h1>
 <h2>{player.name || 'Loading...'}</h2>
 
-<RealtimeConnection showStatus={true} />
+<Network showStatus={true} />
 
 <div class="lobby-actions">
   <button class="start-game-btn" onclick={startGame}>Start Adventure Game</button>

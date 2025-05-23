@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { player } from '$lib/stores/game.svelte';
+  import { player } from '$lib/util/game.svelte';
   import { goto } from '$app/navigation';
-  
 
   function navigateToLobby() {
     goto('/lobby');

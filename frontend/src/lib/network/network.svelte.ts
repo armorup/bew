@@ -1,15 +1,18 @@
 // src/lib/stores/RealtimeStore.svelte.ts
 import { api } from '$lib/app/api.js'
 import { browser } from '$app/environment'
-import { lobby } from '../stores/lobby.svelte'
-import { player } from '../stores/game.svelte'
-import { connection } from '../stores/connection.svelte'
-import { getCookie, setCookie, clearCookie } from '../stores/connection.svelte'
-import { gameState } from '../stores/game.svelte'
+import { lobby } from '../../routes/lobby/lobby.svelte'
+import { player } from '../util/game.svelte'
+import { getCookie, setCookie, clearCookie } from '../util/browser'
+import { gameState } from '../util/game.svelte'
 import type { Player } from '../types/game'
 
 // Create reactive state class
-class Realtime {
+class Network {
+	connection = $state({
+		connected: false,
+		error: null as string | null
+	})
 	// Websocket reference
 	private ws: ReturnType<(typeof api)['ws']['subscribe']> | null = null
 
@@ -37,7 +40,7 @@ class Realtime {
 
 				return true
 			} catch (err) {
-				connection.error = 'Unable to create user. Please try again later.'
+				this.connection.error = 'Unable to create user. Please try again later.'
 				return false
 			}
 		}
@@ -58,7 +61,7 @@ class Realtime {
 
 		this.ws.on('open', () => {
 			console.log('Connected to chat room as', getCookie('playerName'), getCookie('playerId'))
-			connection.connected = true
+			this.connection.connected = true
 		})
 
 		this.ws.subscribe((message) => {
@@ -66,28 +69,16 @@ class Realtime {
 			console.log(type, data, channel)
 
 			if (type === 'todo') {
-				lobby.todos.push(data)
+				lobby.state.todos.push(data)
 			} else if (type === 'chat') {
-				lobby.messages.push(data)
+				lobby.state.messages.push(data)
 			}
 		})
 
 		this.ws.on('close', () => {
 			console.log('Disconnected')
-			connection.connected = false
+			this.connection.connected = false
 		})
-	}
-
-	// Send a chat message
-	sendMessage(message: string) {
-		if (!message.trim()) return
-		api.chat.post({ message })
-	}
-
-	// Send a todo
-	async sendTodo(todo: string) {
-		if (!todo.trim()) return
-		await api.todo.post({ todo })
 	}
 
 	// Disconnect
@@ -95,33 +86,33 @@ class Realtime {
 		if (this.ws) {
 			this.ws.close()
 			this.ws = null
-			connection.connected = false
+			this.connection.connected = false
 		}
 	}
 
 	// Clear error
 	clearError() {
-		connection.error = null
+		this.connection.error = null
 	}
 
 	// Add message manually (useful for local echo)
 	addMessage(message: string) {
-		lobby.messages.push(message)
+		lobby.state.messages.push(message)
 	}
 
 	// Add todo manually
 	addTodo(todo: string) {
-		lobby.todos.push(todo)
+		lobby.state.todos.push(todo)
 	}
 
 	// Clear all messages
 	clearMessages() {
-		lobby.messages.length = 0
+		lobby.state.messages.length = 0
 	}
 
 	// Clear all todos
 	clearTodos() {
-		lobby.todos.length = 0
+		lobby.state.todos.length = 0
 	}
 
 	// Update game players
@@ -149,12 +140,9 @@ class Realtime {
 }
 
 // Create and export the singleton instance
-export const realtime = new Realtime()
+export const network = new Network()
 
 // Initialize on import (if in browser)
 if (browser) {
-	realtime.connect()
+	network.connect()
 }
-
-// Export individual methods for convenience (optional)
-export const { connect, disconnect, sendMessage, sendTodo, ensureUser } = realtime

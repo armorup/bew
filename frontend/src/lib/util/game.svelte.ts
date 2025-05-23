@@ -1,5 +1,5 @@
 import { browser } from '$app/environment'
-import { getCookie } from './connection.svelte'
+import { getCookie } from './browser'
 import type { Player } from '../types/game'
 
 export const player = $state<Player>({

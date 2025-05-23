@@ -1,21 +1,20 @@
 <script lang="ts">
-  import { realtime } from '$lib/app/realtime';
-  import { connection } from '$lib/stores/connection.svelte';
-	import { lobby } from "$lib/stores/lobby.svelte"
+  import { network } from '$lib/network/network.svelte';
+	import { lobby } from "./lobby.svelte"
   let chatInput = '';
   
   function handleSendMessage() {
     if (chatInput.trim()) {
-      realtime.sendMessage(chatInput);
+      lobby.sendMessage(chatInput);
       chatInput = '';
     }
   }
 </script>
 
 <div class="chat-container">
-  {#if connection.connected}
+  {#if network.connection.connected}
     <div class="messages">
-      {#each lobby.messages as msg}
+      {#each lobby.state.messages as msg}
         <div class="message">{msg}</div>
       {/each}
     </div>

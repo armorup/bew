@@ -1,18 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { 
-    connect, 
-    
-  } from '$lib/app/realtime';
-  import { connection } from '$lib/stores/connection.svelte';
-  import { player } from '$lib/stores/game.svelte';
+  import { network } from '../network/network.svelte';
+  import { player } from '$lib/util/game.svelte';
 
   export let showStatus = false;
 
   onMount(() => {
     // Connection is attempted automatically when store is imported,
     // but we can explicitly call it here if needed
-    connect();
+    network.connect();
   });
 
   onDestroy(() => {
@@ -25,10 +21,10 @@
 
 {#if showStatus}
   <div class="realtime-status">
-    {#if connection.connected}
+    {#if network.connection.connected}
       <div class="status-connected">Connected as {player?.name} ({player?.id})</div>
-    {:else if connection.error}
-      <div class="status-error">{connection.error}</div>
+    {:else if network.connection.error}
+      <div class="status-error">{network.connection.error}</div>
     {:else}
       <div class="status-connecting">Connecting...</div>
     {/if}
