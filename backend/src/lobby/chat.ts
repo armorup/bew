@@ -1,12 +1,12 @@
 import { Elysia, t } from 'elysia'
-import { wsService } from '../index'
+import { realtime } from '../index'
 
 class Chat {
   data: string[] = []
 
   add(message: string) {
     this.data.push(message)
-    wsService.broadcast({
+    realtime.broadcast({
       channel: 'lobby',
       type: 'chat',
       data: message,

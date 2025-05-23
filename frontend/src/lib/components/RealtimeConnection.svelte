@@ -4,8 +4,8 @@
     connect, 
     
   } from '$lib/realtime';
-  import { connection } from '$lib/shared.svelte';
-  import { player } from '$lib/shared.svelte';
+  import { connection } from '$lib/stores/connection.svelte';
+  import { player } from '$lib/stores/game.svelte';
 
   export let showStatus = false;
 

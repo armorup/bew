@@ -1,17 +1,6 @@
 import { browser } from '$app/environment'
-import { getCookie } from './cookies'
-
-export const connection = $state({
-	connected: false,
-	error: null as string | null
-})
-
-export const lobby = $state({
-	messages: [] as string[],
-	todos: [] as string[]
-})
-
-export type Player = { id: string; name: string; vote: string | null }
+import { getCookie } from './connection.svelte'
+import type { Player } from '../types/game'
 
 export const player = $state<Player>({
 	id: browser ? getCookie('playerId') || '' : '',

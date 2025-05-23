@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { player, gameState } from '$lib/shared.svelte';
+  import { player, gameState } from '$lib/stores/game.svelte';
   import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
   
   // Define types

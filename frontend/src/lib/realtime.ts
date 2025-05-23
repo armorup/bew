@@ -1,9 +1,12 @@
 // src/lib/stores/RealtimeStore.svelte.ts
-import { api } from '$lib/elysia.js'
+import { api } from '$lib/api/app.js'
 import { browser } from '$app/environment'
-import { player, lobby, connection } from './shared.svelte'
-import { getCookie, setCookie, clearCookie } from './cookies'
-import { gameState, type Player } from './shared.svelte'
+import { lobby } from './stores/lobby.svelte'
+import { player } from './stores/game.svelte'
+import { connection } from './stores/connection.svelte'
+import { getCookie, setCookie, clearCookie } from './stores/connection.svelte'
+import { gameState } from './stores/game.svelte'
+import type { Player } from './types/game'
 
 // Create reactive state class
 class Realtime {

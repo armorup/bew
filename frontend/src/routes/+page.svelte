@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { player } from '$lib/shared.svelte';
+  import { player } from '$lib/stores/game.svelte';
   import { goto } from '$app/navigation';
-  // import RealtimeConnection from '$lib/components/RealtimeConnection.svelte';
   
+
   function navigateToLobby() {
     goto('/lobby');
   }
@@ -12,7 +12,7 @@
   }
 </script>
 
-<h1>Story Party</h1>
+<h1>Story</h1>
   <h2>Welcome, {player.name || 'Guest'}!</h2>
 
 <!-- <RealtimeConnection showStatus={false} /> -->

@@ -1,5 +1,5 @@
-import Elysia, { t } from 'elysia'
-import { messageSchema } from './types'
+import Elysia from 'elysia'
+import { messageSchema } from '../types/realtime'
 
 //------- WebSocket Service -------
 export class Realtime {

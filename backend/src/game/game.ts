@@ -1,21 +1,21 @@
 import { Elysia, t } from 'elysia'
-import { type Story, type Scene } from './types'
+import { type Story, type Scene } from '../types/game'
 import stories from './stories.json'
-
-const story = stories[0] // Assume single story for now
 
 // Game state
 class Game {
-  private _players: string[] = []
+  story: Story = stories[0] // Assume single story for now
+  private _playerIds: string[] = []
+
   private votes: Record<string, string> = {} // {playerId: choiceId}
-  private currentSceneId: string = story.scenes[0].id
+  private currentSceneId: string = this.story.scenes[0].id
 
   get players() {
-    return this._players
+    return this._playerIds
   }
 
   getCurrentScene(): Scene {
-    return story.scenes.find((s) => s.id === this.currentSceneId)!
+    return this.story.scenes.find((s) => s.id === this.currentSceneId)!
   }
 
   getVotes() {
@@ -27,15 +27,15 @@ class Game {
   }
 
   addPlayer(playerId: string) {
-    if (!this._players.includes(playerId)) {
-      this._players.push(playerId)
+    if (!this._playerIds.includes(playerId)) {
+      this._playerIds.push(playerId)
     }
   }
 
   allPlayersVoted() {
     return (
-      this._players.length > 0 &&
-      Object.keys(this.votes).length === this._players.length
+      this._playerIds.length > 0 &&
+      Object.keys(this.votes).length === this._playerIds.length
     )
   }
 

@@ -1,8 +1,6 @@
-import { api } from '$lib/elysia'
-import type { Scene } from '../../../backend/src/game/types'
-import { gameState, type Player } from './shared.svelte'
-
-type GameType = Awaited<ReturnType<typeof api.game.get>>['data']
+import { api } from '$lib/api/app'
+import type { Scene } from '../../../../backend/src/types/game'
+import type { GameType } from '$lib/types/game'
 
 class Game {
 	private game: GameType | null = null

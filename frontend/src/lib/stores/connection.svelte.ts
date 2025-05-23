@@ -1,5 +1,10 @@
 import { browser } from '$app/environment'
 
+export const connection = $state({
+	connected: false,
+	error: null as string | null
+})
+
 // User-related functions
 export function setCookie(name: string, value: string, days = 365) {
 	if (!browser) return

@@ -1,10 +1,10 @@
 import Elysia, { t } from 'elysia'
-import { wsService } from '..'
+import { realtime } from '../index'
 
 export const todo = new Elysia().post(
   '/todo',
   ({ body: { todo } }) => {
-    wsService.broadcast({
+    realtime.broadcast({
       channel: 'lobby',
       type: 'todo',
       data: todo,

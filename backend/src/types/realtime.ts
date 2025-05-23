@@ -22,4 +22,4 @@ export const messageSchema = {
   }),
 } as const
 
-export type MessageSchema = typeof messageSchema.body.static
+export type Message = typeof messageSchema.body.static
