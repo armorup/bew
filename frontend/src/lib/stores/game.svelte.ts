@@ -5,7 +5,7 @@ import type { Player } from '../types/game'
 export const player = $state<Player>({
 	id: browser ? getCookie('playerId') || '' : '',
 	name: browser ? getCookie('playerName') || '' : '',
-	vote: null
+	vote: undefined
 })
 
 export const gameState = $state({

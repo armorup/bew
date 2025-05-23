@@ -3,7 +3,7 @@
   import { 
     connect, 
     
-  } from '$lib/realtime';
+  } from '$lib/app/realtime';
   import { connection } from '$lib/stores/connection.svelte';
   import { player } from '$lib/stores/game.svelte';
 
@@ -26,7 +26,7 @@
 {#if showStatus}
   <div class="realtime-status">
     {#if connection.connected}
-      <div class="status-connected">Connected as {player.name} ({player.id})</div>
+      <div class="status-connected">Connected as {player?.name} ({player?.id})</div>
     {:else if connection.error}
       <div class="status-error">{connection.error}</div>
     {:else}

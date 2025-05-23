@@ -1,18 +1,19 @@
 import { Elysia, t } from 'elysia'
-import { type Story, type Scene } from '../types/game'
+import {
+  type Story,
+  type Scene,
+  type Player,
+  playerSchema,
+} from '../types/game'
 import stories from './stories.json'
 
 // Game state
 class Game {
   story: Story = stories[0] // Assume single story for now
-  private _playerIds: string[] = []
+  players: Record<string, Player> = {}
 
   private votes: Record<string, string> = {} // {playerId: choiceId}
   private currentSceneId: string = this.story.scenes[0].id
-
-  get players() {
-    return this._playerIds
-  }
 
   getCurrentScene(): Scene {
     return this.story.scenes.find((s) => s.id === this.currentSceneId)!
@@ -27,15 +28,23 @@ class Game {
   }
 
   addPlayer(playerId: string) {
-    if (!this._playerIds.includes(playerId)) {
-      this._playerIds.push(playerId)
+    if (!this.players[playerId]) {
+      this.players[playerId] = { id: playerId, name: '', vote: undefined }
     }
   }
 
+  get playerCount() {
+    return Object.keys(this.players).length
+  }
+
+  get playerIds() {
+    return Object.keys(this.players)
+  }
+
   allPlayersVoted() {
+    const playerIds = Object.keys(this.players)
     return (
-      this._playerIds.length > 0 &&
-      Object.keys(this.votes).length === this._playerIds.length
+      playerIds.length > 0 && playerIds.every((id) => this.players[id].vote)
     )
   }
 
@@ -79,6 +88,19 @@ export const game = new Elysia({ prefix: '/game' })
       votes: game.getVotes(),
     }
   })
+  .get(
+    '/player',
+    ({ query, store: { game } }) => {
+      const player = game.players[query.id]
+      if (!player) {
+        throw new Error('Player not found')
+      }
+      return player
+    },
+    {
+      query: t.Object({ id: t.String() }),
+    }
+  )
   .post(
     '/join',
     ({ store: { game }, body }) => {

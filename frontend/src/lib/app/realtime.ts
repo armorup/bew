@@ -1,12 +1,12 @@
 // src/lib/stores/RealtimeStore.svelte.ts
-import { api } from '$lib/api/app.js'
+import { api } from '$lib/app/api.js'
 import { browser } from '$app/environment'
-import { lobby } from './stores/lobby.svelte'
-import { player } from './stores/game.svelte'
-import { connection } from './stores/connection.svelte'
-import { getCookie, setCookie, clearCookie } from './stores/connection.svelte'
-import { gameState } from './stores/game.svelte'
-import type { Player } from './types/game'
+import { lobby } from '../stores/lobby.svelte'
+import { player } from '../stores/game.svelte'
+import { connection } from '../stores/connection.svelte'
+import { getCookie, setCookie, clearCookie } from '../stores/connection.svelte'
+import { gameState } from '../stores/game.svelte'
+import type { Player } from '../types/game'
 
 // Create reactive state class
 class Realtime {

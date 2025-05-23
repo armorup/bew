@@ -1,6 +1,6 @@
-import { api } from '$lib/api/app'
+import { api } from '$lib/app/api'
 import type { Scene } from '../../../../backend/src/types/game'
-import type { GameType } from '$lib/types/game'
+import type { Game as GameType } from '$lib/types/game'
 
 class Game {
 	private game: GameType | null = null

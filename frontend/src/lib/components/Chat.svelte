@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { realtime } from '$lib/realtime';
+  import { realtime } from '$lib/app/realtime';
   import { connection } from '$lib/stores/connection.svelte';
 	import { lobby } from "$lib/stores/lobby.svelte"
   let chatInput = '';
