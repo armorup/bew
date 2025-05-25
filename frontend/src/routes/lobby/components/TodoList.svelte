@@ -1,7 +1,7 @@
 <!-- src/lib/components/TodoList.svelte -->
 <script lang="ts">
   import { network } from '$lib/network/network.svelte';
-  import { lobby } from '../../routes/lobby/lobby.svelte';
+  import { lobby } from '../lobby.svelte';
   
   let todoInput = '';
   

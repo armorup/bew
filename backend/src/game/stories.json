@@ -6,7 +6,7 @@
       {
         "id": "scene-1",
         "title": "A Fork in the Road",
-        "description": "You come to a fork in the road. Do you go left or right?",
+        "text": "You come to a fork in the road. Do you go left or right?",
         "choices": [
           { "id": "left", "text": "Go left", "nextSceneId": "scene-2" },
           { "id": "right", "text": "Go right", "nextSceneId": "scene-3" }
@@ -15,7 +15,7 @@
       {
         "id": "scene-2",
         "title": "The River",
-        "description": "You find a river. Do you swim across or walk along the bank?",
+        "text": "You find a river. Do you swim across or walk along the bank?",
         "choices": [
           { "id": "swim", "text": "Swim across", "nextSceneId": "scene-4" },
           {
@@ -28,7 +28,7 @@
       {
         "id": "scene-3",
         "title": "The Forest",
-        "description": "You enter a dark forest. Do you light a torch or proceed in the dark?",
+        "text": "You enter a dark forest. Do you light a torch or proceed in the dark?",
         "choices": [
           { "id": "torch", "text": "Light a torch", "nextSceneId": "scene-4" },
           {
@@ -41,13 +41,13 @@
       {
         "id": "scene-4",
         "title": "A Safe Place",
-        "description": "You find a safe place to rest. The adventure continues...",
+        "text": "You find a safe place to rest. The adventure continues...",
         "choices": []
       },
       {
         "id": "scene-5",
         "title": "A Sudden End",
-        "description": "You encounter danger and your journey ends here.",
+        "text": "You encounter danger and your journey ends here.",
         "choices": []
       }
     ]

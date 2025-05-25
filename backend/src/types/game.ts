@@ -1,26 +1,24 @@
 import { t } from 'elysia'
 
 // Types
-export const playerSchema = t.Object({
-  id: t.String(),
-  name: t.String(),
-  vote: t.Optional(t.String()),
-})
-export type Player = typeof playerSchema.static
 
 export const choiceSchema = t.Object({
   id: t.String(),
   text: t.String(),
 })
-type Choice = typeof choiceSchema.static
+
+export const playerSchema = t.Object({
+  id: t.String(),
+  name: t.String(),
+  vote: t.Optional(t.String()),
+})
 
 export const sceneSchema = t.Object({
   id: t.String(),
   title: t.String(),
-  description: t.String(),
+  text: t.String(),
   choices: t.Array(choiceSchema),
 })
-export type Scene = typeof sceneSchema.static
 
 export const storySchema = t.Object({
   id: t.String(),
@@ -28,4 +26,7 @@ export const storySchema = t.Object({
   scenes: t.Array(sceneSchema),
 })
 
+export type Choice = typeof choiceSchema.static
+export type Player = typeof playerSchema.static
+export type Scene = typeof sceneSchema.static
 export type Story = typeof storySchema.static

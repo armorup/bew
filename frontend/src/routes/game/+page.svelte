@@ -1,240 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { player, gameState } from '$lib/util/game.svelte';
+  import { game } from './game';
   import RealtimeConnection from '$lib/components/Network.svelte';
   
-  // Define types
-  type OptionId = string;
-  
-  interface GameOption {
-    id: OptionId;
-    text: string;
-  }
-  
-  interface GameScene {
-    id: string;
-    text: string;
-    options: GameOption[];
-    timeRemaining: number;
-  }
-  
-  interface Player {
-    id: string;
-    name: string;
-    vote: OptionId | null;
-  }
-  
-  interface SceneHistoryEntry {
-    sceneId: string;
-    sceneText: string;
-    choiceText: string;
-    votes: number;
-  }
-  
-  // Type for vote counts
-  interface VoteCount {
-    optionId: OptionId;
-    count: number;
-    text: string;
-  }
-  
-  // Scene history tracking
-  let sceneHistory = $state<SceneHistoryEntry[]>([]);
-  
-  
-  
-  let currentScene = $state<GameScene>({
-    id: '1',
-    text: 'You are at the entrance to a dark cave. A cool breeze flows from the darkness within.',
-    options: [
-      { id: 'option1', text: 'Enter the cave cautiously' },
-      { id: 'option2', text: 'Look for another way around' },
-      { id: 'option3', text: 'Set up camp outside and wait for daylight' }
-    ],
-    timeRemaining: 20 // Seconds
-  });
-  
-  let userVote = $state<OptionId | null>(null);
-  let countdownInterval: ReturnType<typeof setInterval> | undefined;
-  
-  // Update player's vote
-  function vote(optionId: OptionId): void {
-    userVote = optionId;
-    
-    // Find current player and update their vote
-    const currentPlayerId: string | undefined = player.id;
-    if (currentPlayerId) {
-      const playerIndex: number = gameState.players.findIndex(p => p.id === currentPlayerId);
-      
-      if (playerIndex !== -1) {
-        // Update existing player's vote
-        gameState.players[playerIndex].vote = optionId;
-      } else {
-        // Add new player to the game
-        const newPlayer: Player = {
-          id: currentPlayerId,
-          name: player.name || 'Guest',
-          vote: optionId
-        };
-        
-        gameState.players = [...gameState.players, newPlayer];
-      }
-      
-      // In a real implementation, we would send this vote to the backend
-      // For prototype, we'll just simulate it with a console message
-      console.log(`Vote sent: ${optionId} by player ${player.name} (${currentPlayerId})`);
-      
-      // This would be the actual API call in a fully implemented version:
-      // api.game.vote.post({ 
-      //   optionId, 
-      //   sceneId: currentScene.id 
-      // });
-    }
-  }
-  
-  // Calculate votes for each option
-  function getVotesForOption(optionId: OptionId): number {
-    return gameState.players.filter(player => player.vote === optionId).length;
-  }
-  
-  // Function to determine winning option
-  function determineWinner(): VoteCount {
-    const voteCounts: VoteCount[] = currentScene.options.map(option => ({
-      optionId: option.id,
-      count: getVotesForOption(option.id),
-      text: option.text
-    }));
-    
-    // Sort by vote count (highest first)
-    voteCounts.sort((a, b) => b.count - a.count);
-    
-    // Check if there's a clear winner
-    if (voteCounts[0].count > voteCounts[1].count) {
-      return voteCounts[0];
-    } else {
-      // Tie between top options - for now just pick the first one
-      return voteCounts[0];
-    }
-  }
-  
-  // Function to advance to the next scene
-  function advanceScene(winningOptionId: OptionId): void {
-    const winner: VoteCount = determineWinner();
-    
-    // Save the current scene to history
-    const chosenOption: GameOption | undefined = currentScene.options.find(opt => opt.id === winningOptionId);
-    const historyEntry: SceneHistoryEntry = {
-      sceneId: currentScene.id,
-      sceneText: currentScene.text,
-      choiceText: chosenOption ? chosenOption.text : 'Unknown choice',
-      votes: getVotesForOption(winningOptionId)
-    };
-    
-    sceneHistory = [...sceneHistory, historyEntry];
-    
-    // In a real implementation, we would fetch the next scene based on this choice
-    // For the prototype, we'll create a mock follow-up scene
-    const nextSceneText: string = getNextSceneText(winningOptionId);
-    
-    // Reset countdown and create new scene
-    const newScene: GameScene = {
-      id: (parseInt(currentScene.id) + 1).toString(),
-      text: nextSceneText,
-      options: generateNextOptions(winningOptionId),
-      timeRemaining: 20
-    };
-    
-    currentScene = newScene;
-    
-    // Reset players' votes
-    gameState.players = gameState.players.map(player => ({ ...player, vote: null }));
-    userVote = null;
-    
-    // Restart countdown
-    startCountdown();
-  }
-  
-  // Get next scene text based on chosen option
-  function getNextSceneText(optionId: OptionId): string {
-    switch(optionId) {
-      case 'option1':
-        return 'You enter the cave cautiously. As your eyes adjust to the darkness, you notice a faint glow coming from deeper within.';
-      case 'option2':
-        return 'You find a narrow path that winds around the mountain. It looks treacherous, but might lead to another entrance.';
-      case 'option3':
-        return 'You set up camp for the night. As darkness falls, you hear strange sounds coming from the cave.';
-      default:
-        return 'You continue your journey, facing new challenges ahead.';
-    }
-  }
-  
-  // Generate next options based on previous choice
-  function generateNextOptions(previousChoice: OptionId): GameOption[] {
-    switch(previousChoice) {
-      case 'option1':
-        return [
-          { id: 'option1', text: 'Move toward the glow' },
-          { id: 'option2', text: 'Call out to see if anyone is there' },
-          { id: 'option3', text: 'Retreat from the cave' }
-        ];
-      case 'option2':
-        return [
-          { id: 'option1', text: 'Carefully navigate the path' },
-          { id: 'option2', text: 'Look for a safer route' },
-          { id: 'option3', text: 'Return to the cave entrance' }
-        ];
-      case 'option3':
-        return [
-          { id: 'option1', text: 'Investigate the sounds' },
-          { id: 'option2', text: 'Hide in your tent' },
-          { id: 'option3', text: 'Pack up and move away from the cave' }
-        ];
-      default:
-        return [
-          { id: 'option1', text: 'Continue forward' },
-          { id: 'option2', text: 'Take a rest' },
-          { id: 'option3', text: 'Turn back' }
-        ];
-    }
-  }
-  
-  // Start countdown function
-  function startCountdown(): void {
-    if (countdownInterval) clearInterval(countdownInterval);
-    
-    countdownInterval = setInterval(() => {
-      if (currentScene.timeRemaining > 0) {
-        currentScene.timeRemaining -= 1;
-      } else {
-        // Time's up, determine winning option
-        if (countdownInterval) clearInterval(countdownInterval);
-        
-        const winner = determineWinner();
-        console.log(`Voting finished! Winning option: ${winner.text} with ${winner.count} votes`);
-        
-        // Advance to next scene
-        advanceScene(winner.optionId);
-      }
-    }, 1000);
-  }
-  
-  // Initialize game
-  onMount((): (() => void) => {
-    // Insert the current player into the players list
-    if (player && player.name) {
-      if (!gameState.players.some(p => p.id === player.id)) {
-        gameState.players = [...gameState.players, { id: player.id, name: player.name, vote: null }];
-      }
-    }
-    
-    // Start the countdown
-    startCountdown();
-    
-    // Return cleanup function
-    return (): void => {
-      if (countdownInterval) clearInterval(countdownInterval);
-    };
-  });
+  let userVote = $state(null);
 </script>
 
 <svelte:head>
@@ -251,19 +20,19 @@
       <button class="back-button" onclick={() => window.history.back()}>← Back</button>
       <h1>Choose Your Adventure</h1>
     </div>
-    <div class="timer">Time remaining: {currentScene.timeRemaining}s</div>
+    <div class="timer">Time remaining: 00s</div>
   </header>
   
   <main class="game-content">
     <div class="scene">
       <div class="scene-text">
-        <p>{currentScene.text}</p>
+        <p>{game.scene.text}</p>
       </div>
       
       <div class="options">
         <h3>What will you do?</h3>
         <div class="options-grid">
-          {#each currentScene.options as option}
+          {#each game.choices as option}
             <button
               type="button"
               class="option {userVote === option.id ? 'selected' : ''}"
@@ -289,7 +58,7 @@
     
     <aside class="sidebar">
       <div class="players-panel panel">
-        <h3>Players ({gameState.players.length})</h3>
+        <h3>Players ({game.players.length})</h3>
         <ul class="player-list">
           {#each gameState.players as player}
             <li class={player.id === player.id ? 'current-player' : ''}>
@@ -301,20 +70,6 @@
           {/each}
         </ul>
       </div>
-      
-      {#if sceneHistory.length > 0}
-        <div class="history-panel panel">
-          <h3>Story History</h3>
-          <ul class="history-list">
-            {#each sceneHistory as scene}
-              <li>
-                <div class="history-scene">Scene {scene.sceneId}: {scene.sceneText.substring(0, 40)}...</div>
-                <div class="history-choice">→ {scene.choiceText} ({scene.votes} votes)</div>
-              </li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
     </aside>
   </main>
 </div>

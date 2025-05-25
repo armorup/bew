@@ -2,35 +2,36 @@ import { Elysia, t } from 'elysia'
 import { realtime } from '../index'
 
 class Chat {
-  data: string[] = []
+  private _history: string[] = []
 
   add(message: string) {
-    this.data.push(message)
+    this._history.push(message)
     realtime.broadcast({
       channel: 'lobby',
       type: 'chat',
-      data: message,
+      data: [message],
     })
   }
 
-  get() {
-    return this.data
+  get history(): string[] {
+    return this._history
   }
 
   clear() {
-    this.data = []
+    this._history = []
   }
 }
 
-export const chat = new Elysia().decorate('chat', new Chat()).post(
-  '/chat',
-  ({ body: { message }, chat }) => {
-    chat.add(message)
-    return { status: 'ok' }
-  },
-  {
-    body: t.Object({
-      message: t.String(),
-    }),
-  }
-)
+export const chat = new Elysia({ prefix: '/chat' })
+  .decorate('chat', new Chat())
+  .post(
+    '/',
+    ({ body: message, chat }) => {
+      chat.add(message)
+      return chat.history
+    },
+    {
+      body: t.String(),
+      response: t.Array(t.String()),
+    }
+  )

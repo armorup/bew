@@ -2,21 +2,21 @@
   import { player } from '$lib/util/game.svelte';
   import { goto } from '$app/navigation';
   import Network from '$lib/components/Network.svelte';
-  import Chat from './Chat.svelte';
-  import TodoList from './TodoList.svelte';
+  import Chat from './components/Chat.svelte';
+  import TodoList from './components/TodoList.svelte';
   
   function startGame() {
     goto('/game');
   }
 </script>
 
-<h1>Chat Room</h1>
+<h1>Lobby</h1>
 <h2>{player.name || 'Loading...'}</h2>
 
 <Network showStatus={true} />
 
 <div class="lobby-actions">
-  <button class="start-game-btn" onclick={startGame}>Start Adventure Game</button>
+  <button class="start-game-btn" onclick={startGame}>Start</button>
 </div>
 
 <div class="lobby-container">

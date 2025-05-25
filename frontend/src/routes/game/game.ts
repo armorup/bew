@@ -1,20 +1,16 @@
 import { api } from '$lib/app/api'
-import type { Scene } from '../../../../backend/src/types/game'
+import type { Choice, Player, Scene } from '$lib/types/game'
 import type { Game as GameType } from '$lib/types/game'
 
 class Game {
-	private game: GameType | null = null
+	scene: Scene | null = $state(null)
 
 	async fetchGame() {
-		const { data } = await api.game.get()
-		this.game = data
+		const { data } = await api.game.scene.get()
+		this.scene = data
 	}
 
-	getCurrentScene(): Scene | null {
-		return this.game?.scene ?? null
-	}
-
-	getChoices() {
+	get choices(): Choice[] {
 		return this.game?.scene.choices ?? []
 	}
 
@@ -25,3 +21,5 @@ class Game {
 		})
 	}
 }
+
+export const game = new Game()

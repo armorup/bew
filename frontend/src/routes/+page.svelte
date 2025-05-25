@@ -17,7 +17,7 @@
 <!-- <RealtimeConnection showStatus={false} /> -->
 
 <div class="home-container">
-  <p>Join the adventure!</p>
+  <p>Join the story!</p>
   <div class="button-group">
     <button class="primary-btn" onclick={navigateToLobby}>Enter Lobby</button>
     <button class="secondary-btn" onclick={navigateToGame}>Play Game</button>

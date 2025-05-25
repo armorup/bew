@@ -14,7 +14,7 @@ export class Lobby {
 	// Send a chat message
 	sendMessage(message: string) {
 		if (!message.trim()) return
-		api.chat.post({ message })
+		api.chat.post(message)
 	}
 
 	// Send a todo

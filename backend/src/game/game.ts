@@ -3,9 +3,12 @@ import {
   type Story,
   type Scene,
   type Player,
+  sceneSchema,
   playerSchema,
+  storySchema,
 } from '../types/game'
 import stories from './stories.json'
+import { realtime } from '..'
 
 // Game state
 class Game {
@@ -15,7 +18,7 @@ class Game {
   private votes: Record<string, string> = {} // {playerId: choiceId}
   private currentSceneId: string = this.story.scenes[0].id
 
-  getCurrentScene(): Scene {
+  get scene(): Scene {
     return this.story.scenes.find((s) => s.id === this.currentSceneId)!
   }
 
@@ -30,6 +33,11 @@ class Game {
   addPlayer(playerId: string) {
     if (!this.players[playerId]) {
       this.players[playerId] = { id: playerId, name: '', vote: undefined }
+      realtime.broadcast({
+        channel: 'game',
+        type: 'players',
+        data: Object.values(this.players).map((player) => player.name),
+      })
     }
   }
 
@@ -68,7 +76,7 @@ class Game {
     }
 
     // Move to next scene
-    const currentScene = this.getCurrentScene()
+    const currentScene = this.scene
     const selectedChoice = currentScene.choices.find(
       (c) => c.id === selectedChoiceId
     )
@@ -82,12 +90,9 @@ class Game {
 
 export const game = new Elysia({ prefix: '/game' })
   .state({ game: new Game() })
-  .get('/', ({ store: { game } }) => {
-    return {
-      scene: game.getCurrentScene(),
-      votes: game.getVotes(),
-    }
-  })
+  .get('/story', ({ store: { game } }) => game.story)
+  .get('/scene', ({ store: { game } }) => game.scene)
+  .get('/players', ({ store: { game } }) => game.players)
   .get(
     '/player',
     ({ query, store: { game } }) => {
@@ -99,6 +104,7 @@ export const game = new Elysia({ prefix: '/game' })
     },
     {
       query: t.Object({ id: t.String() }),
+      response: playerSchema,
     }
   )
   .post(
@@ -121,7 +127,7 @@ export const game = new Elysia({ prefix: '/game' })
       }
       game.vote(playerId, choiceId)
       game.progressScene()
-      return { ok: true, votes: game.getVotes(), scene: game.getCurrentScene() }
+      return { ok: true, votes: game.getVotes(), scene: game.scene }
     },
     {
       body: t.Object({ playerId: t.String(), choiceId: t.String() }),

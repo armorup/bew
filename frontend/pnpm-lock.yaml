@@ -34,7 +34,7 @@ importers:
         specifier: ^6.6.3
         version: 6.6.3
       '@testing-library/svelte':
-        specifier: ^5.2.4
+        specifier: ^5.2.8
         version: 5.2.8(svelte@5.32.1)(vite@6.3.5)(vitest@3.1.4(jsdom@26.1.0))
       eslint:
         specifier: ^9.18.0
