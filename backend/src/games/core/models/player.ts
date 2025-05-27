@@ -1,5 +1,5 @@
 import { t } from 'elysia'
-import { PlayerType } from '../../../types/games'
+import type { PlayerType } from '../../../types/games'
 
 export class Player {
   static t = t.Object({

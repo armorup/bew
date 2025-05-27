@@ -1,15 +1,21 @@
 import Elysia, { t } from 'elysia'
 import { GamesManager } from './games.manager'
 import { loadStory } from '../db/db'
-import { Game } from './models/game'
 import { Player } from './models/player'
+import { Game } from './models/game'
 
 export const games = new Elysia({ prefix: '/games' })
   .decorate('gamesManager', new GamesManager())
   // Get all games
-  .get('/', ({ gamesManager }) => {
-    return gamesManager.games.map((game) => game.toJSON())
-  })
+  .get(
+    '/',
+    ({ gamesManager }) => {
+      return gamesManager.games.map((game) => game.toJSON())
+    },
+    {
+      response: t.Array(Game.t),
+    }
+  )
   // Create a new game
   .post(
     '/create',
@@ -33,22 +39,11 @@ export const games = new Elysia({ prefix: '/games' })
     ({ params, gamesManager }) => {
       const game = gamesManager.getGame(params.id)
       if (!game) throw new Error('Game not found')
-
-      return {
-        id: game.id,
-        scene: game.currentScene,
-        players: Array.from(game.players.values()),
-        votes: Object.fromEntries(game.votes),
-      }
+      return game.toJSON()
     },
     {
       params: t.Object({ id: t.String() }),
-      response: t.Object({
-        id: t.String(),
-        scene: t.Any(),
-        players: t.Array(Player.t),
-        votes: t.Record(t.String(), t.String()),
-      }),
+      response: Game.t,
     }
   )
   // Join game

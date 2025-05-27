@@ -1,9 +1,5 @@
-import { Elysia, t } from 'elysia'
-import {
-  uniqueNamesGenerator,
-  adjectives,
-  animals,
-} from 'unique-names-generator'
+import { Elysia } from 'elysia'
+import { uniqueNamesGenerator, animals } from 'unique-names-generator'
 
 export const user = new Elysia({ prefix: '/user' })
   .state({

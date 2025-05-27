@@ -12,7 +12,7 @@
     const res = await api.games.create.post({});
     if (res.status === 200 && res.data?.gameId) {
       gameId = res.data?.gameId ?? null;
-      goto(`/game/${gameId}`);
+      goto(`/games/${gameId}`);
     } else {
       error = res.status.toString() + ' Error creating game';
     }
@@ -47,21 +47,10 @@
     color: #555;
   }
 
-  .home-container {
-    max-width: 600px;
-    margin: 2rem auto;
-    text-align: center;
-  }
-  
+ 
   p {
     margin-bottom: 1.5rem;
     font-size: 1.2rem;
-  }
-  
-  .button-group {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
   }
   
   button {
@@ -73,24 +62,6 @@
     transition: all 0.2s;
   }
   
-  .primary-btn {
-    background-color: #4a86e8;
-    color: white;
-  }
-  
-  .primary-btn:hover {
-    background-color: #3a76d8;
-  }
-  
-  .secondary-btn {
-    background-color: #ff5722;
-    color: white;
-  }
-  
-  .secondary-btn:hover {
-    background-color: #e64a19;
-  }
-
   /* Add page padding */
   :global(body) {
     padding: 1rem;

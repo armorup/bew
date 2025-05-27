@@ -2,35 +2,28 @@ import { t } from 'elysia'
 import { Player } from './player'
 import { Scene } from './scene'
 import { Story } from './story'
-import { GameType, SceneType, StoryType } from '../../../types/games'
+import type { GameType } from '../../../types/games'
+import type { Choice } from './choice'
 
 export class Game {
   static t = t.Object({
     id: t.String(),
     createdAt: t.String(),
-    currentSceneId: t.String(),
+    currentScene: Scene.t,
     players: t.Array(Player.t),
-    votes: t.Array(t.String()),
   })
 
   public readonly id: string
   public readonly createdAt: Date
-  public currentSceneId: string
+  public currentScene: Scene
   public players: Map<string, Player> = new Map()
-  public votes: Map<string, string> = new Map() // playerId -> choiceId
-  public story: StoryType
+  public story: Story
 
-  constructor(id: string, story: StoryType) {
+  constructor(id: string, story: Story) {
     this.id = id
     this.story = story
-    this.currentSceneId = story.scenes[0].id
+    this.currentScene = story.scenes[0]
     this.createdAt = new Date()
-  }
-
-  get currentScene(): SceneType {
-    const scene = this.story.scenes.find((s) => s.id === this.currentSceneId)
-    if (!scene) throw new Error('Invalid scene state')
-    return scene
   }
 
   addPlayer(player: Player): void {
@@ -44,9 +37,10 @@ export class Game {
     return {
       id: this.id,
       createdAt: this.createdAt.toISOString(),
-      currentSceneId: this.currentSceneId,
-      players: Array.from(this.players.values()),
-      votes: Array.from(this.votes.values()),
+      currentScene: this.currentScene.toJSON(),
+      players: Array.from(this.players.values()).map((player) =>
+        player.toJSON()
+      ),
     }
   }
 }

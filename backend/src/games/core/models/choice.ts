@@ -1,5 +1,5 @@
 import { t } from 'elysia'
-import { ChoiceType } from '../../../types/games'
+import type { ChoiceType } from '../../../types/games'
 
 export class Choice {
   static t = t.Object({
@@ -10,9 +10,13 @@ export class Choice {
   id: string
   text: string
 
-  constructor(id: string, text: string) {
-    this.id = id
-    this.text = text
+  private constructor(choice: ChoiceType) {
+    this.id = choice.id
+    this.text = choice.text
+  }
+
+  static fromJSON(json: ChoiceType): Choice {
+    return new Choice(json)
   }
 
   toJSON(): ChoiceType {

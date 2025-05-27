@@ -1,6 +1,6 @@
 import { t } from 'elysia'
 import { Scene } from './scene'
-import { StoryType } from '../../../types/games'
+import type { StoryType } from '../../../types/games'
 
 export class Story {
   static t = t.Object({
@@ -13,10 +13,14 @@ export class Story {
   title: string
   scenes: Scene[]
 
-  constructor(id: string, title: string, scenes: Scene[]) {
-    this.id = id
-    this.title = title
-    this.scenes = scenes
+  private constructor(story: StoryType) {
+    this.id = story.id
+    this.title = story.title
+    this.scenes = story.scenes.map((scene) => Scene.fromJSON(scene))
+  }
+
+  static fromJSON(json: StoryType): Story {
+    return new Story(json)
   }
 
   toJSON(): StoryType {

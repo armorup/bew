@@ -1,6 +1,6 @@
 import { t } from 'elysia'
 import { Choice } from './choice'
-import { SceneType } from '../../../types/games'
+import type { SceneType } from '../../../types/games'
 
 export class Scene {
   static t = t.Object({
@@ -15,11 +15,15 @@ export class Scene {
   text: string
   choices: Choice[]
 
-  constructor(id: string, title: string, text: string, choices: Choice[]) {
-    this.id = id
-    this.title = title
-    this.text = text
-    this.choices = choices
+  private constructor(scene: SceneType) {
+    this.id = scene.id
+    this.title = scene.title
+    this.text = scene.text.replace(/\\n/g, '\n')
+    this.choices = scene.choices.map((choice) => Choice.fromJSON(choice))
+  }
+
+  static fromJSON(json: SceneType): Scene {
+    return new Scene(json)
   }
 
   toJSON(): SceneType {

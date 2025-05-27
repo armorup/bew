@@ -1,18 +1,18 @@
-import { StoryType } from '../../types/games'
 import { Game } from './models/game'
+import { Story } from './models/story'
 
 export class GamesManager {
   private _games = new Map<string, Game>()
 
   get games(): Game[] {
-    return Array.from(this.games.values())
+    return Array.from(this._games.values())
   }
 
   hasGame(id: string): boolean {
     return this._games.has(id)
   }
 
-  createGame(story: StoryType): string {
+  createGame(story: Story): string {
     const id = crypto.randomUUID()
     this._games.set(id, new Game(id, story))
     return id
