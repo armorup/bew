@@ -1,4 +1,5 @@
 import { t } from 'elysia'
+import { PlayerType } from '../../../types/games'
 
 export class Player {
   static t = t.Object({
@@ -15,5 +16,13 @@ export class Player {
     this.id = id
     this.name = name
     this.vote = undefined
+  }
+
+  toJSON(): PlayerType {
+    return {
+      id: this.id,
+      name: this.name,
+      vote: this.vote,
+    }
   }
 }

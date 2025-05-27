@@ -1,5 +1,6 @@
 import { t } from 'elysia'
 import { Choice } from './choice'
+import { SceneType } from '../../../types/games'
 
 export class Scene {
   static t = t.Object({
@@ -19,5 +20,14 @@ export class Scene {
     this.title = title
     this.text = text
     this.choices = choices
+  }
+
+  toJSON(): SceneType {
+    return {
+      id: this.id,
+      title: this.title,
+      text: this.text,
+      choices: this.choices,
+    }
   }
 }

@@ -1,22 +1,21 @@
 import Elysia, { t } from 'elysia'
-import { GamesManager } from './core/game.manager'
-import { loadStory } from './db/story'
-import { Game } from './core/models/game'
-import { Player } from './core/models/player'
+import { GamesManager } from './games.manager'
+import { loadStory } from '../db/db'
+import { Game } from './models/game'
+import { Player } from './models/player'
 
 export const games = new Elysia({ prefix: '/games' })
-  .decorate('gameManager', new GamesManager())
+  .decorate('gamesManager', new GamesManager())
   // Get all games
-  .model({
-    games: t.Array(Game.t),
+  .get('/', ({ gamesManager }) => {
+    return gamesManager.games.map((game) => game.toJSON())
   })
-  .get('/', ({ gameManager }) => gameManager.getAllGames())
   // Create a new game
   .post(
     '/create',
-    async ({ body, gameManager, status }) => {
+    async ({ body, gamesManager, status }) => {
       const story = loadStory(body.storyId ?? 'story-1')
-      const gameId = gameManager.createGame(story)
+      const gameId = gamesManager.createGame(story)
       return status(200, {
         gameId: gameId,
       })
@@ -31,8 +30,8 @@ export const games = new Elysia({ prefix: '/games' })
   // Get game state
   .get(
     '/:id',
-    ({ params, gameManager }) => {
-      const game = gameManager.getGame(params.id)
+    ({ params, gamesManager }) => {
+      const game = gamesManager.getGame(params.id)
       if (!game) throw new Error('Game not found')
 
       return {
@@ -55,8 +54,8 @@ export const games = new Elysia({ prefix: '/games' })
   // Join game
   .post(
     '/:id/join',
-    ({ params, body, gameManager }) => {
-      const game = gameManager.getGame(params.id)
+    ({ params, body, gamesManager }) => {
+      const game = gamesManager.getGame(params.id)
       if (!game) throw new Error('Game not found')
 
       const player = new Player(crypto.randomUUID(), body.name)
