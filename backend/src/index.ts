@@ -3,8 +3,8 @@ import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
 import { realtime, Realtime } from './realtime/realtime'
 import { user } from './user/user'
-import { games } from './games/games'
-import { lobby } from './lobby/lobby'
+import { games } from './games/games.route'
+import { lobby } from './lobby/lobby.route'
 
 export const app = new Elysia()
   .use(cors())

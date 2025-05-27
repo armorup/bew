@@ -1,6 +1,11 @@
 import Elysia, { t } from 'elysia'
 import { realtimeServer } from '../index'
-import { todoSchema } from '../types/lobby'
+
+class Todo {
+  static t = t.Object({
+    todo: t.String(),
+  })
+}
 
 export const todo = new Elysia({ prefix: '/todo' }).post(
   '/',
@@ -13,6 +18,6 @@ export const todo = new Elysia({ prefix: '/todo' }).post(
     return { status: 'ok' }
   },
   {
-    body: todoSchema,
+    body: Todo.t,
   }
 )

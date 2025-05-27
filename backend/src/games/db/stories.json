@@ -51,5 +51,66 @@
         "choices": []
       }
     ]
+  },
+  {
+    "id": "story-2",
+    "title": "The Mysterious Elevator",
+    "scenes": [
+      {
+        "id": "scene-1",
+        "title": "The Lobby",
+        "text": "You step into the lobby of an old building. An elevator door creaks open. Do you enter or take the stairs?",
+        "choices": [
+          {
+            "id": "elevator",
+            "text": "Enter the elevator",
+            "nextSceneId": "scene-2"
+          },
+          {
+            "id": "stairs",
+            "text": "Take the stairs",
+            "nextSceneId": "scene-3"
+          }
+        ]
+      },
+      {
+        "id": "scene-2",
+        "title": "The Strange Descent",
+        "text": "The elevator starts moving downward rapidly. Do you press the emergency button or wait it out?",
+        "choices": [
+          {
+            "id": "emergency",
+            "text": "Press the emergency button",
+            "nextSceneId": "scene-4"
+          },
+          { "id": "wait", "text": "Wait it out", "nextSceneId": "scene-5" }
+        ]
+      },
+      {
+        "id": "scene-3",
+        "title": "The Stairwell",
+        "text": "You climb the stairs and hear whispers. Do you call out or keep moving quietly?",
+        "choices": [
+          { "id": "call", "text": "Call out", "nextSceneId": "scene-4" },
+          {
+            "id": "quiet",
+            "text": "Keep moving quietly",
+            "nextSceneId": "scene-5"
+          }
+        ]
+      },
+      {
+        "id": "scene-4",
+        "title": "A Hidden Room",
+        "text": "You discover a hidden room filled with old equipment and mysterious symbols. The mystery deepens...",
+        "choices": []
+      },
+      {
+        "id": "scene-5",
+        "title": "Trapped",
+        "text": "You find yourself trapped in a strange dimension with no way back.",
+        "choices": []
+      }
+    ]
   }
 ]

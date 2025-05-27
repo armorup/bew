@@ -1,7 +1,7 @@
-import type { Story } from '../../types/game'
-import { Game } from './game.model'
+import { Game } from './models/game'
+import { Story } from './models/story'
 
-export class GameManager {
+export class GamesManager {
   private games = new Map<string, Game>()
 
   hasGame(id: string): boolean {

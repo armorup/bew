@@ -1,15 +1,16 @@
 import Elysia, { t } from 'elysia'
-import { GameManager } from './core/game.manager'
+import { GamesManager } from './core/game.manager'
 import { loadStory } from './db/story'
-import type { Player, Story } from '../types/game'
-import { playerSchema } from '../types/game'
+import { Game } from './core/models/game'
+import { Player } from './core/models/player'
 
 export const games = new Elysia({ prefix: '/games' })
-  .decorate('gameManager', new GameManager())
+  .decorate('gameManager', new GamesManager())
   // Get all games
-  .get('/', ({ gameManager }) => ({
-    games: gameManager.getAllGames(),
-  }))
+  .model({
+    games: t.Array(Game.t),
+  })
+  .get('/', ({ gameManager }) => gameManager.getAllGames())
   // Create a new game
   .post(
     '/create',
@@ -46,7 +47,7 @@ export const games = new Elysia({ prefix: '/games' })
       response: t.Object({
         id: t.String(),
         scene: t.Any(),
-        players: t.Array(playerSchema),
+        players: t.Array(Player.t),
         votes: t.Record(t.String(), t.String()),
       }),
     }
@@ -58,10 +59,7 @@ export const games = new Elysia({ prefix: '/games' })
       const game = gameManager.getGame(params.id)
       if (!game) throw new Error('Game not found')
 
-      const player: Player = {
-        id: crypto.randomUUID(),
-        name: body.name,
-      }
+      const player = new Player(crypto.randomUUID(), body.name)
 
       game.addPlayer(player)
       return {
