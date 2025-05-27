@@ -29,9 +29,9 @@
       <input 
         bind:value={todoInput} 
         placeholder="Add a todo..." 
-        on:keydown={(e) => e.key === 'Enter' && handleAddTodo()}
+        onkeydown={(e) => e.key === 'Enter' && handleAddTodo()}
       />
-      <button on:click={handleAddTodo}>Add</button>
+      <button onclick={handleAddTodo}>Add</button>
     </div>
   {:else}
     <div class="connecting">Connecting...</div>

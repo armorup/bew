@@ -12,7 +12,7 @@ export class Realtime {
   }
 }
 
-export const websocket = new Elysia().ws('/ws', {
+export const realtime = new Elysia().ws('/ws', {
   body: messageSchema.body,
   response: messageSchema.response,
   query: messageSchema.query,

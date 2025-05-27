@@ -1,13 +1,21 @@
 <script lang="ts">
   import { player } from '$lib/util/game.svelte';
   import { goto } from '$app/navigation';
+	import { api } from "$lib/app/api"
 
-  function navigateToLobby() {
-    goto('/lobby');
-  }
-  
-  function navigateToGame() {
-    goto('/game');
+  let gameId: string | null = null;
+  let error: string | null = null;
+
+  async function hostGame() {
+    error = null;
+    
+    const res = await api.games.create.post({});
+    if (res.status === 200 && res.data?.gameId) {
+      gameId = res.data?.gameId ?? null;
+      goto(`/game/${gameId}`);
+    } else {
+      error = res.status.toString() + ' Error creating game';
+    }
   }
 </script>
 
@@ -16,13 +24,16 @@
 
 <!-- <RealtimeConnection showStatus={false} /> -->
 
-<div class="home-container">
-  <p>Join the story!</p>
-  <div class="button-group">
-    <button class="primary-btn" onclick={navigateToLobby}>Enter Lobby</button>
-    <button class="secondary-btn" onclick={navigateToGame}>Play Game</button>
-  </div>
-</div>
+
+
+<button onclick={hostGame}>Host Game</button>
+
+{#if gameId}
+  <p>Game created! Game ID: {gameId}</p>
+{/if}
+{#if error}
+  <p style="color: red">{error}</p>
+{/if}
 
 <style>
   h1 {

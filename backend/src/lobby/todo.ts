@@ -1,11 +1,11 @@
 import Elysia, { t } from 'elysia'
-import { realtime } from '../index'
+import { realtimeServer } from '../index'
 import { todoSchema } from '../types/lobby'
 
 export const todo = new Elysia({ prefix: '/todo' }).post(
   '/',
   ({ body: { todo } }) => {
-    realtime.broadcast({
+    realtimeServer.broadcast({
       channel: 'lobby',
       type: 'todo',
       data: [todo],

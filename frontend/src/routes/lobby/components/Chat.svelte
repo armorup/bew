@@ -23,9 +23,9 @@
       <input 
         bind:value={chatInput} 
         placeholder="Type a message..." 
-        on:keydown={(e) => e.key === 'Enter' && handleSendMessage()}
+        onkeydown={(e) => e.key === 'Enter' && handleSendMessage()}
       />
-      <button on:click={handleSendMessage}>Send</button>
+      <button onclick={handleSendMessage}>Send</button>
     </div>
   {:else}
     <div class="connecting">Connecting to chat...</div>
