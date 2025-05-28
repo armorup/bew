@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import { messageSchema } from '../types/realtime'
+import { messageSchema } from './message'
 
 //------- WebSocket Service -------
 export class Realtime {

@@ -1,6 +1,7 @@
 import { t } from 'elysia'
 import { Choice } from './choice'
-import type { SceneType } from '../../../types/games'
+
+export type SceneType = typeof Scene.t.static
 
 export class Scene {
   static t = t.Object({

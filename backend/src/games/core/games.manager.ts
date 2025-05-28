@@ -1,7 +1,8 @@
 import { Game } from './models/game'
+import { GameJoinable } from './models/game.joinable'
 import { Story } from './models/story'
 
-export class GamesManager {
+class GamesManager {
   private _games = new Map<string, Game>()
 
   get games(): Game[] {
@@ -16,6 +17,10 @@ export class GamesManager {
     const id = crypto.randomUUID()
     this._games.set(id, new Game(id, story))
     return id
+  }
+
+  getJoinableGames(): GameJoinable[] {
+    return this.games.map((game) => new GameJoinable(game.id, game.createdAt))
   }
 
   getGame(id: string): Game {
@@ -36,3 +41,5 @@ export class GamesManager {
     })
   }
 }
+
+export const gamesManager = new GamesManager()

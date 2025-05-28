@@ -1,11 +1,11 @@
 import { t } from 'elysia'
 
 //------- Schema and types -------
-const MessageType = {
-  chat: 'chat',
-  todo: 'todo',
-  players: 'players',
-} as const
+export enum MessageType {
+  CHAT = 'chat',
+  TODO = 'todo',
+  PLAYERS = 'players',
+}
 
 export const messageSchema = {
   body: t.Object({

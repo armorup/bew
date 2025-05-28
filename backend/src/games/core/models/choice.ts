@@ -1,5 +1,6 @@
 import { t } from 'elysia'
-import type { ChoiceType } from '../../../types/games'
+
+export type ChoiceType = typeof Choice.t.static
 
 export class Choice {
   static t = t.Object({

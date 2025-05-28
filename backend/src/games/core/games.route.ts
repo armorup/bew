@@ -1,11 +1,12 @@
 import Elysia, { t } from 'elysia'
-import { GamesManager } from './games.manager'
 import { loadStory } from '../db/db'
 import { Player } from './models/player'
 import { Game } from './models/game'
+import { GameJoinable } from './models/game.joinable'
+import { gamesManager } from './games.manager'
 
 export const games = new Elysia({ prefix: '/games' })
-  .decorate('gamesManager', new GamesManager())
+  .decorate('gamesManager', gamesManager)
   // Get all games
   .get(
     '/',
@@ -54,7 +55,6 @@ export const games = new Elysia({ prefix: '/games' })
       if (!game) throw new Error('Game not found')
 
       const player = new Player(crypto.randomUUID(), body.name)
-
       game.addPlayer(player)
       return {
         gameId: game.id,
@@ -69,4 +69,11 @@ export const games = new Elysia({ prefix: '/games' })
         playerId: t.String(),
       }),
     }
+  )
+  .get(
+    '/joinable',
+    ({ gamesManager }) => {
+      return gamesManager.getJoinableGames().map((game) => game.toJSON())
+    },
+    { response: t.Array(GameJoinable.t) }
   )

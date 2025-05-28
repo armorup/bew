@@ -2,15 +2,21 @@ import { t } from 'elysia'
 import { Player } from './player'
 import { Scene } from './scene'
 import { Story } from './story'
-import type { GameType } from '../../../types/games'
-import type { Choice } from './choice'
 
+export type GameType = typeof Game.t.static
+
+export enum GameStatus {
+  WAITING = 'waiting',
+  PLAYING = 'playing',
+  FINISHED = 'finished',
+}
 export class Game {
   static t = t.Object({
     id: t.String(),
     createdAt: t.String(),
     currentScene: Scene.t,
     players: t.Array(Player.t),
+    status: t.Enum(GameStatus),
   })
 
   public readonly id: string
@@ -18,6 +24,7 @@ export class Game {
   public currentScene: Scene
   public players: Map<string, Player> = new Map()
   public story: Story
+  public status: GameStatus = GameStatus.WAITING
 
   constructor(id: string, story: Story) {
     this.id = id
@@ -41,6 +48,7 @@ export class Game {
       players: Array.from(this.players.values()).map((player) =>
         player.toJSON()
       ),
+      status: this.status,
     }
   }
 }
