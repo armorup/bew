@@ -2,7 +2,7 @@ import Elysia from 'elysia'
 import { messageSchema } from './message'
 
 //------- WebSocket Service -------
-export class Realtime {
+export class RealtimeManager {
   private onlineUsers: Record<string, string> = {} // {id: name}
 
   constructor(private server: Elysia['server']) {}
@@ -12,13 +12,6 @@ export class Realtime {
   }
 }
 
-export const realtime = new Elysia().ws('/ws', {
-  body: messageSchema.body,
-  response: messageSchema.response,
-  query: messageSchema.query,
-  open(ws) {
-    const { playerId } = ws.data?.query || {}
-    ws.subscribe('lobby')
-  },
-  message(ws, message) {},
-})
+// ------- Notes -------
+// This manager is used to broadcast messages to all connected clients
+// It is instantiated in the index.ts file after the app is created

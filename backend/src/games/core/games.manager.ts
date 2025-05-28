@@ -1,3 +1,4 @@
+import { sse } from '../../sse/sse'
 import { Game, GameStatus } from './models/game'
 import { GameJoinable } from './models/game.joinable'
 import { Story } from './models/story'
@@ -45,6 +46,14 @@ class GamesManager {
         this.removeGame(id)
       }
     })
+  }
+
+  updateGame(id: string, update: Partial<Game>) {
+    const game = this.games.find((g) => g.id === id)
+    if (game) {
+      Object.assign(game, update)
+      sse.broadcast()
+    }
   }
 }
 

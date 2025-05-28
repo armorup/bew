@@ -1,7 +1,6 @@
 import { t } from 'elysia'
 
 export type PlayerType = typeof Player.t.static
-
 export class Player {
   static t = t.Object({
     id: t.String(),

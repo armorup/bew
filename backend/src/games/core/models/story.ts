@@ -2,7 +2,6 @@ import { t } from 'elysia'
 import { Scene } from './scene'
 
 export type StoryType = typeof Story.t.static
-
 export class Story {
   static t = t.Object({
     id: t.String(),

@@ -1,5 +1,6 @@
 import Elysia, { t } from 'elysia'
-import { realtimeServer } from '../index'
+import { realtimeManager } from '../index'
+import { MessageType } from '../realtime/message'
 
 class Todo {
   static t = t.Object({
@@ -10,9 +11,9 @@ class Todo {
 export const todo = new Elysia({ prefix: '/todo' }).post(
   '/',
   ({ body: { todo } }) => {
-    realtimeServer.broadcast({
+    realtimeManager.broadcast({
       channel: 'lobby',
-      type: 'todo',
+      type: MessageType.TODO,
       data: [todo],
     })
     return { status: 'ok' }

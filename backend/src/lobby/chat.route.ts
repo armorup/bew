@@ -1,14 +1,15 @@
 import { Elysia, t } from 'elysia'
-import { realtimeServer } from '../index'
+import { realtimeManager } from '../index'
+import { MessageType } from '../realtime/message'
 
 class Chat {
   private _history: string[] = []
 
   add(message: string) {
     this._history.push(message)
-    realtimeServer.broadcast({
+    realtimeManager.broadcast({
       channel: 'lobby',
-      type: 'chat',
+      type: MessageType.CHAT,
       data: [message],
     })
   }

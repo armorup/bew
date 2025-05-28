@@ -1,10 +1,11 @@
 import { Elysia } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
-import { realtime, Realtime } from './realtime/realtime'
 import { user } from './user/user'
 import { games } from './games/core/games.route'
 import { lobby } from './lobby/lobby.route'
+import { RealtimeManager } from './realtime/realtime.manager'
+import { realtime } from './realtime/realtime.route'
 
 export const app = new Elysia()
   .use(cors())
@@ -17,6 +18,6 @@ export const app = new Elysia()
   .listen(3000)
 
 console.log(`🦊 Elysia is running at http://localhost:3000`)
-export const realtimeServer = new Realtime(app.server)
+export const realtimeManager = new RealtimeManager(app.server)
 
 export type App = typeof app
