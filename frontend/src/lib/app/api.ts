@@ -1,4 +1,4 @@
 import { treaty } from '@elysiajs/eden'
-import type { App } from '../../../../backend/src/types/app.js'
+import type { App } from '../../../../backend/src/index'
 
 export const api = treaty<App>('http://localhost:3000')

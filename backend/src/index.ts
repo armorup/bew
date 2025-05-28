@@ -18,3 +18,5 @@ export const app = new Elysia()
 
 console.log(`🦊 Elysia is running at http://localhost:3000`)
 export const realtimeServer = new Realtime(app.server)
+
+export type App = typeof app
