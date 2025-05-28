@@ -1,4 +1,4 @@
-import { Game } from './models/game'
+import { Game, GameStatus } from './models/game'
 import { GameJoinable } from './models/game.joinable'
 import { Story } from './models/story'
 
@@ -20,7 +20,13 @@ class GamesManager {
   }
 
   getJoinableGames(): GameJoinable[] {
-    return this.games.map((game) => new GameJoinable(game.id, game.createdAt))
+    return this.games
+      .filter(
+        (game) =>
+          game.status === GameStatus.WAITING &&
+          game.players.size < game.maxPlayers
+      )
+      .map((game) => GameJoinable.fromGame(game))
   }
 
   getGame(id: string): Game {

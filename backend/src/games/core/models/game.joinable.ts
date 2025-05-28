@@ -2,7 +2,6 @@ import { t } from 'elysia'
 import { Game } from './game'
 
 export type GameJoinableType = typeof GameJoinable.t.static
-
 export class GameJoinable {
   static t = t.Object({
     id: t.String(),
@@ -16,11 +15,11 @@ export class GameJoinable {
   public readonly playerCount: number
   public readonly maxPlayers: number
 
-  constructor(
+  private constructor(
     id: string,
     createdAt: Date,
-    playerCount: number = 0,
-    maxPlayers: number = 10
+    playerCount: number,
+    maxPlayers: number
   ) {
     this.id = id
     this.createdAt = createdAt
@@ -29,7 +28,12 @@ export class GameJoinable {
   }
 
   static fromGame(game: Game): GameJoinable {
-    return new GameJoinable(game.id, game.createdAt, game.players.size, 2)
+    return new GameJoinable(
+      game.id,
+      game.createdAt,
+      game.players.size,
+      game.maxPlayers
+    )
   }
 
   toJSON(): GameJoinableType {

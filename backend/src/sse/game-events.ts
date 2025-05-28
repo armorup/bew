@@ -30,9 +30,5 @@ export function broadcastUpdate() {
 }
 
 function getJoinableGames(): GameJoinableType[] {
-  return gamesManager.games
-    .filter(
-      (game) => game.status === GameStatus.WAITING && game.players.size < 2
-    )
-    .map((game) => GameJoinable.fromGame(game).toJSON())
+  return gamesManager.getJoinableGames().map((game) => game.toJSON())
 }

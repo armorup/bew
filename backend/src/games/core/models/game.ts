@@ -16,12 +16,14 @@ export class Game {
     createdAt: t.String(),
     currentScene: Scene.t,
     players: t.Array(Player.t),
+    maxPlayers: t.Number(),
     status: t.Enum(GameStatus),
   })
 
   public readonly id: string
   public readonly createdAt: Date
   public currentScene: Scene
+  public readonly maxPlayers: number
   public players: Map<string, Player> = new Map()
   public story: Story
   public status: GameStatus = GameStatus.WAITING
@@ -31,6 +33,7 @@ export class Game {
     this.story = story
     this.currentScene = story.scenes[0]
     this.createdAt = new Date()
+    this.maxPlayers = 10
   }
 
   addPlayer(player: Player): void {
@@ -48,6 +51,7 @@ export class Game {
       players: Array.from(this.players.values()).map((player) =>
         player.toJSON()
       ),
+      maxPlayers: this.maxPlayers,
       status: this.status,
     }
   }
