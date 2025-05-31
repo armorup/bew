@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia'
 import { realtimeManager } from '../index'
-import { MessageType } from '../realtime/message'
+import { MessageType } from '../realtime/realtime.message'
 
 class Todo {
   static t = t.Object({

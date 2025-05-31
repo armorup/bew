@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import { messageSchema } from './message'
+import { messageSchema } from './realtime.message'
 
 export const realtime = new Elysia().ws('/ws', {
   body: messageSchema.body,
