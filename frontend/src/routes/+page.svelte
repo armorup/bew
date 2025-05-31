@@ -2,6 +2,7 @@
   import { player } from '$lib/util/game.svelte';
   import { goto } from '$app/navigation';
 	import { api } from "$lib/app/api"
+  import { onMount } from 'svelte';
 
   let gameId: string | null = null;
   let error: string | null = null;
@@ -17,14 +18,46 @@
       error = res.status.toString() + ' Error creating game';
     }
   }
+
+  let messages: any[] = []
+
+  async function consumeStream() {
+    const { data, error } = await api.sse.get()
+    if (error) throw error;
+    for await (const chunk of data) {
+      console.log('chunk', chunk)
+      messages = [...messages, chunk]
+    }
+  }
+
+  let newMessage = '';
+  async function sendMessage() {
+    await api.sse.send.post({ message: newMessage });
+    newMessage = '';
+  }
+
+  onMount( () => {
+    // await consumeStream();
+    const eventSource = new EventSource('http://localhost:3000/sse');
+
+    eventSource.onmessage = (event) => {
+      messages = [...messages, event.data];
+      console.log('Received message:', event.data);
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('SSE error:', error);
+    };
+
+    return () => eventSource.close();
+  });
+  
 </script>
 
 <h1>Story</h1>
   <h2>Welcome, {player.name || 'Guest'}!</h2>
 
 <!-- <RealtimeConnection showStatus={false} /> -->
-
-
 
 <button onclick={hostGame}>Host Game</button>
 
@@ -34,6 +67,15 @@
 {#if error}
   <p style="color: red">{error}</p>
 {/if}
+
+<input bind:value={newMessage} placeholder="Type a message..." />
+<button onclick={sendMessage}>Send</button>
+
+<ul>
+  {#each messages as msg}
+    <li>{msg}</li>
+  {/each}
+</ul>
 
 <style>
   h1 {
