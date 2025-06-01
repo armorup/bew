@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { network } from '$lib/network/network.svelte';
+  import { realtimeManager } from '$lib/realtime/realtime.svelte';
 	import { lobby } from "../lobby.svelte"
   let chatInput = '';
   
@@ -12,7 +12,7 @@
 </script>
 
 <div class="chat-container">
-  {#if network.connection.connected}
+  {#if realtimeManager.connection.connected}
     <div class="messages">
       {#each lobby.state.messages as msg}
         <div class="message">{msg}</div>

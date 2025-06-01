@@ -1,7 +1,7 @@
 <script lang="ts">
   import { player } from '$lib/util/game.svelte';
   import { goto } from '$app/navigation';
-  import Network from '$lib/components/Network.svelte';
+  import Realtime from '$lib/components/Realtime.svelte';
   import Chat from './components/Chat.svelte';
   import TodoList from './components/TodoList.svelte';
   
@@ -13,7 +13,7 @@
 <h1>Lobby</h1>
 <h2>{player.name || 'Loading...'}</h2>
 
-<Network showStatus={true} />
+<Realtime showStatus={true} />
 
 <div class="lobby-actions">
   <button class="start-game-btn" onclick={startGame}>Start</button>

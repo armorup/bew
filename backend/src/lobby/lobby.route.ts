@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia'
-import { chat } from './chat.route'
-import { todo } from './todo.route'
+import { chat } from './chat/chat.route'
+import { todo } from './todo/todo.route'
 
 export const lobby = new Elysia({ prefix: '/lobby' })
   .get('/', () => {

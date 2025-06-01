@@ -1,14 +1,14 @@
-// src/lib/stores/RealtimeStore.svelte.ts
 import { api } from '$lib/app/api.js'
 import { browser } from '$app/environment'
 import { lobby } from '../../routes/lobby/lobby.svelte'
 import { player } from '../util/game.svelte'
 import { getCookie, setCookie, clearCookie } from '../util/browser'
 import { gameState } from '../util/game.svelte'
-import type { Player } from '../types/game'
+import { MessageEnum } from '../../../../backend/src/realtime/realtime.message'
+// import type { Player } from '../types/game'
 
 // Create reactive state class
-class Network {
+class RealtimeManager {
 	connection = $state({
 		connected: false,
 		error: null as string | null
@@ -65,13 +65,16 @@ class Network {
 		})
 
 		this.ws.subscribe((message) => {
-			const { channel, type, data } = message.data
-			console.log(type, data, channel)
+			const { type, data } = message.data
+			console.log(type, data)
 
-			if (type === 'todo') {
-				lobby.state.todos.push(data)
-			} else if (type === 'chat') {
-				lobby.state.messages.push(data)
+			switch (type) {
+				case MessageEnum.CHAT:
+					lobby.state.messages.push(data)
+					break
+				case MessageEnum.TODO:
+					lobby.state.todos.push(data)
+					break
 			}
 		})
 
@@ -116,9 +119,9 @@ class Network {
 	}
 
 	// Update game players
-	updateGamePlayers(players: Array<Player>) {
-		gameState.players = players
-	}
+	// updateGamePlayers(players: Array<Player>) {
+	// 	gameState.players = players
+	// }
 
 	// Update current scene
 	updateCurrentScene(scene: {
@@ -140,9 +143,9 @@ class Network {
 }
 
 // Create and export the singleton instance
-export const network = new Network()
+export const realtimeManager = new RealtimeManager()
 
 // Initialize on import (if in browser)
 if (browser) {
-	network.connect()
+	realtimeManager.connect()
 }

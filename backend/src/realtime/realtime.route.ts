@@ -1,12 +1,14 @@
 import Elysia from 'elysia'
-import { messageSchema } from './realtime.message'
+import { Message } from './realtime.message'
+import { realtimeManager } from '..'
 
 export const realtime = new Elysia().ws('/ws', {
-  body: messageSchema.body,
-  response: messageSchema.response,
-  query: messageSchema.query,
+  body: Message.t.body,
+  response: Message.t.response,
+  query: Message.t.query,
+
   open(ws) {
-    const { playerId } = ws.data?.query || {}
+    realtimeManager.addConnection(ws)
     ws.subscribe('lobby')
   },
   message(ws, message) {},

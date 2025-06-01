@@ -1,6 +1,6 @@
 <!-- src/lib/components/TodoList.svelte -->
 <script lang="ts">
-  import { network } from '$lib/network/network.svelte';
+  import { realtimeManager } from '$lib/realtime/realtime.svelte';
   import { lobby } from '../lobby.svelte';
   
   let todoInput = '';
@@ -16,7 +16,7 @@
 <div class="todo-container">
   <h3>Todo</h3>
   
-  {#if network.connection.connected}
+  {#if realtimeManager.connection.connected}
     <ul class="todos">
       {#each lobby.state.todos as todo}
         <li>{todo}</li>

@@ -1,14 +1,19 @@
-import Elysia from 'elysia'
-import { messageSchema } from './realtime.message'
+import { Elysia } from 'elysia'
+import { Message } from './realtime.message'
 
 //------- WebSocket Service -------
 export class RealtimeManager {
-  private onlineUsers: Record<string, string> = {} // {id: name}
+  // private connections: Record<string, WebSocket> = {} // {user id: WebSocket}
+  private connections: Set<any> = new Set()
 
   constructor(private server: Elysia['server']) {}
 
-  broadcast(message: typeof messageSchema.body.static) {
-    this.server?.publish?.(message.channel, JSON.stringify(message))
+  broadcast(channel: string, message: typeof Message.t.body.static) {
+    this.server?.publish?.(channel, JSON.stringify(message))
+  }
+
+  addConnection(ws: any) {
+    this.connections.add(ws)
   }
 }
 
