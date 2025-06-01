@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia'
-import { Message } from './realtime.message'
+import { Message, type MessageType } from './realtime.message'
 
 //------- WebSocket Service -------
 export class RealtimeManager {
@@ -8,7 +8,7 @@ export class RealtimeManager {
 
   constructor(private server: Elysia['server']) {}
 
-  broadcast(channel: string, message: typeof Message.t.body.static) {
+  broadcast(channel: string, message: Message) {
     this.server?.publish?.(channel, JSON.stringify(message))
   }
 

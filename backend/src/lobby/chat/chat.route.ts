@@ -1,16 +1,13 @@
 import { Elysia, t } from 'elysia'
 import { realtimeManager } from '../../index'
-import { MessageEnum } from '../../realtime/realtime.message'
+import { Message } from '../../realtime/realtime.message'
 
 class Chat {
   private _history: string[] = []
 
   add(message: string) {
     this._history.push(message)
-    realtimeManager.broadcast('lobby', {
-      type: MessageEnum.CHAT,
-      data: message,
-    })
+    realtimeManager.broadcast('lobby', Message.chat(message))
   }
 
   get history(): string[] {

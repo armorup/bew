@@ -17,7 +17,13 @@ const todoSchema = t.Object({
   data: t.String(),
 })
 
+export type ChatType = typeof chatSchema.static
+
+export type TodoType = typeof todoSchema.static
+
 const messageSchema = t.Union([chatSchema, todoSchema])
+
+export type MessageType = ChatType | TodoType
 
 //------- Message class -------
 export class Message {
@@ -29,21 +35,28 @@ export class Message {
     }),
   }
 
-  constructor(
-    public channel: string,
-    public type: MessageEnum,
-    public data: string
-  ) {}
+  public type: MessageType['type']
+  public data: MessageType['data']
 
-  toJSON() {
+  //------- Static convenience methods -------
+  static chat(data: string) {
+    return new this(MessageEnum.CHAT, data)
+  }
+
+  static todo(data: string) {
+    return new this(MessageEnum.TODO, data)
+  }
+
+  //------- Constructor -------
+  private constructor(type: MessageType['type'], data: MessageType['data']) {
+    this.type = type
+    this.data = data
+  }
+
+  toJSON(): MessageType {
     return {
-      channel: this.channel,
       type: this.type,
       data: this.data,
     }
   }
 }
-
-// export type MessageBodyType = typeof Message.t.body.static
-// export type MessageResponseType = typeof Message.t.response.static
-// export type MessageQueryType = typeof Message.t.query.static

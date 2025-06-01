@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia'
 import { realtimeManager } from '../../index'
-import { MessageEnum } from '../../realtime/realtime.message'
+import { Message, MessageEnum } from '../../realtime/realtime.message'
 
 class TodoManager {
   static t = t.Object({
@@ -10,10 +10,7 @@ class TodoManager {
 
   add(todo: string) {
     this._todos.push(todo)
-    realtimeManager.broadcast('lobby', {
-      type: MessageEnum.TODO,
-      data: todo,
-    })
+    realtimeManager.broadcast('lobby', Message.todo(todo))
   }
 
   get todos(): string[] {
