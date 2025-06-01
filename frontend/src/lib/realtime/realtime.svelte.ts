@@ -4,7 +4,6 @@ import { lobby } from '../../routes/lobby/lobby.svelte'
 import { player } from '../util/game.svelte'
 import { getCookie, setCookie, clearCookie } from '../util/browser'
 import { gameState } from '../util/game.svelte'
-import { MessageEnum } from '../../../../backend/src/realtime/realtime.message'
 // import type { Player } from '../types/game'
 
 // Create reactive state class
@@ -69,10 +68,10 @@ class RealtimeManager {
 			console.log(type, data)
 
 			switch (type) {
-				case MessageEnum.CHAT:
+				case 'chat:message':
 					lobby.state.messages.push(data)
 					break
-				case MessageEnum.TODO:
+				case 'todo:create':
 					lobby.state.todos.push(data)
 					break
 			}

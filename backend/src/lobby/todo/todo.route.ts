@@ -1,11 +1,8 @@
-import Elysia, { t } from 'elysia'
+import Elysia from 'elysia'
 import { realtimeManager } from '../../index'
-import { Message, MessageEnum } from '../../realtime/realtime.message'
+import { Message } from '../../realtime/realtime.message'
 
 class TodoManager {
-  static t = t.Object({
-    todo: t.String(),
-  })
   private _todos: string[] = []
 
   add(todo: string) {
@@ -21,12 +18,12 @@ class TodoManager {
 export const todo = new Elysia({ prefix: '/todo' })
   .decorate('todoManager', new TodoManager())
   .post(
-    '/',
-    ({ body: { todo }, todoManager }) => {
-      todoManager.add(todo)
+    '/create',
+    ({ body: { data }, todoManager }) => {
+      todoManager.add(data)
       return todoManager.todos
     },
     {
-      body: TodoManager.t,
+      body: Message.t.todo.body,
     }
   )

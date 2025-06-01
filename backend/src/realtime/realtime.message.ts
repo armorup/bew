@@ -1,38 +1,37 @@
 import { t } from 'elysia'
 
-//------- Schema and types -------
-export enum MessageEnum {
-  CHAT = 'chat',
-  TODO = 'todo',
+// ------- Message schemas -------
+// Define all message schemas here first
+
+const messageSchemas = {
+  chat_message: t.Object({
+    type: t.Literal('chat:message'),
+    data: t.String(),
+  }),
+  todo_create: t.Object({
+    type: t.Literal('todo:create'),
+    data: t.String(),
+  }),
 }
-
-//------- Schema -------
-const chatSchema = t.Object({
-  type: t.Literal(MessageEnum.CHAT),
-  data: t.String(),
-})
-
-const todoSchema = t.Object({
-  type: t.Literal(MessageEnum.TODO),
-  data: t.String(),
-})
-
-export type ChatType = typeof chatSchema.static
-
-export type TodoType = typeof todoSchema.static
-
-const messageSchema = t.Union([chatSchema, todoSchema])
-
-export type MessageType = ChatType | TodoType
 
 //------- Message class -------
 export class Message {
+  private static messageSchema = t.Union(Object.values(messageSchemas))
+
   static t = {
-    body: messageSchema,
-    response: messageSchema,
+    body: this.messageSchema,
+    response: this.messageSchema,
     query: t.Object({
       playerId: t.Optional(t.String()),
     }),
+    todo: {
+      schema: messageSchemas.todo_create,
+      body: t.Omit(messageSchemas.todo_create, ['type']),
+    },
+    chat: {
+      schema: messageSchemas.chat_message,
+      body: t.Omit(messageSchemas.chat_message, ['type']),
+    },
   }
 
   public type: MessageType['type']
@@ -40,11 +39,11 @@ export class Message {
 
   //------- Static convenience methods -------
   static chat(data: string) {
-    return new this(MessageEnum.CHAT, data)
+    return new this('chat:message', data)
   }
 
   static todo(data: string) {
-    return new this(MessageEnum.TODO, data)
+    return new this('todo:create', data)
   }
 
   //------- Constructor -------
@@ -60,3 +59,9 @@ export class Message {
     }
   }
 }
+
+export type ChatType = typeof messageSchemas.chat_message.static
+
+export type TodoType = typeof messageSchemas.todo_create.static
+
+export type MessageType = ChatType | TodoType

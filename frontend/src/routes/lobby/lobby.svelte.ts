@@ -14,13 +14,13 @@ export class Lobby {
 	// Send a chat message
 	sendMessage(message: string) {
 		if (!message.trim()) return
-		api.lobby.chat.post(message)
+		api.lobby.chat.post({ data: message })
 	}
 
 	// Send a todo
 	sendTodo(todo: string) {
 		if (!todo.trim()) return
-		api.lobby.todo.post({ todo })
+		api.lobby.todo.create.post({ data: todo })
 	}
 }
 

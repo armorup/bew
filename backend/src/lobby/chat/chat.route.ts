@@ -23,12 +23,12 @@ export const chat = new Elysia({ prefix: '/chat' })
   .decorate('chat', new Chat())
   .post(
     '/',
-    ({ body: message, chat }) => {
-      chat.add(message)
+    ({ body: { data }, chat }) => {
+      chat.add(data)
       return chat.history
     },
     {
-      body: t.String(),
+      body: Message.t.chat.body,
       response: t.Array(t.String()),
     }
   )
