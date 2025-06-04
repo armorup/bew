@@ -1,16 +1,22 @@
 import { Elysia, t } from 'elysia'
 import { realtimeManager } from '../../index'
-import { Message } from '../../realtime/realtime.message'
+import {
+  ChatSchema,
+  createChat,
+  createChatMsg,
+  type Chat,
+} from '../../models/models'
 
-class Chat {
-  private _history: string[] = []
+class ChatManager {
+  private _history: Chat[] = []
 
   add(message: string) {
-    this._history.push(message)
-    realtimeManager.broadcast('lobby', Message.chat(message))
+    const chat = createChat(message)
+    this._history.push(chat)
+    realtimeManager.broadcast('lobby', createChatMsg(chat))
   }
 
-  get history(): string[] {
+  get history(): Chat[] {
     return this._history
   }
 
@@ -20,7 +26,7 @@ class Chat {
 }
 
 export const chat = new Elysia({ prefix: '/chat' })
-  .decorate('chat', new Chat())
+  .decorate('chat', new ChatManager())
   .post(
     '/',
     ({ body: { data }, chat }) => {
@@ -28,7 +34,7 @@ export const chat = new Elysia({ prefix: '/chat' })
       return chat.history
     },
     {
-      body: Message.t.chat.body,
-      response: t.Array(t.String()),
+      body: t.Object({ data: t.String() }),
+      response: t.Array(ChatSchema),
     }
   )

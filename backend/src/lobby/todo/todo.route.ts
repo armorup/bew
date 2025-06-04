@@ -1,29 +1,34 @@
-import Elysia from 'elysia'
+import Elysia, { t } from 'elysia'
 import { realtimeManager } from '../../index'
-import { Message } from '../../realtime/realtime.message'
+import { createTodo, createTodoMsg, type Todo } from '../../models/models'
 
 class TodoManager {
-  private _todos: string[] = []
+  private _todos: Set<Todo> = new Set() // {todoId: todo}
 
   add(todo: string) {
-    this._todos.push(todo)
-    realtimeManager.broadcast('lobby', Message.todo(todo))
+    // create a todo Record and add to _todos
+    const newTodo = createTodo(todo)
+    this._todos.add(newTodo)
+    realtimeManager.broadcast(null, createTodoMsg(newTodo))
   }
 
-  get todos(): string[] {
-    return this._todos
+  get todos(): Todo[] {
+    return Array.from(this._todos)
   }
 }
 
 export const todo = new Elysia({ prefix: '/todo' })
   .decorate('todoManager', new TodoManager())
+  .get('/', ({ todoManager }) => {
+    return todoManager.todos
+  })
   .post(
     '/create',
-    ({ body: { data }, todoManager }) => {
-      todoManager.add(data)
+    ({ body: { todo }, todoManager }) => {
+      todoManager.add(todo)
       return todoManager.todos
     },
     {
-      body: Message.t.todo.body,
+      body: t.Object({ todo: t.String() }),
     }
   )

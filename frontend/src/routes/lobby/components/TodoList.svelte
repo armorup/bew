@@ -7,19 +7,18 @@
   
   async function handleAddTodo() {
     if (todoInput.trim()) {
-      lobby.sendTodo(todoInput);
+      lobby.addTodo(todoInput);
       todoInput = '';
     }
   }
-</script>
-
+</script>addTodo
 <div class="todo-container">
   <h3>Todo</h3>
   
   {#if realtimeManager.connection.connected}
     <ul class="todos">
       {#each lobby.state.todos as todo}
-        <li>{todo}</li>
+        <li>{todo.text}</li>
       {:else}
         <li class="empty">No todos yet</li>
       {/each}

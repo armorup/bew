@@ -1,15 +1,19 @@
-import Elysia from 'elysia'
-import { Message } from './realtime.message'
+import Elysia, { t } from 'elysia'
 import { realtimeManager } from '..'
+import { messageSchemas } from '../models/models'
 
 export const realtime = new Elysia().ws('/ws', {
-  body: Message.t.body,
-  response: Message.t.response,
-  query: Message.t.query,
+  response: messageSchemas,
 
   open(ws) {
-    realtimeManager.addConnection(ws)
-    ws.subscribe('lobby')
+    // TODO: get userId from auth
+    const randomId = Math.random().toString(36).substring(2, 15)
+
+    ws.subscribe(realtimeManager.DEFAULT_CHANNEL)
   },
-  message(ws, message) {},
+
+  message(ws, message) {
+    // ws.send(message)
+    // console.log(message)
+  },
 })

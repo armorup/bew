@@ -9,7 +9,7 @@
       chatInput = '';
     }
   }
-</script>
+</script>addChatMessage
 
 <div class="chat-container">
   {#if realtimeManager.connection.connected}

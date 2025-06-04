@@ -4,10 +4,11 @@ import { lobby } from '../../routes/lobby/lobby.svelte'
 import { player } from '../util/game.svelte'
 import { getCookie, setCookie, clearCookie } from '../util/browser'
 import { gameState } from '../util/game.svelte'
+import type { Todo } from '../../../../backend/src/models/models'
 // import type { Player } from '../types/game'
 
 // Create reactive state class
-class RealtimeManager {
+class RealtimeClient {
 	connection = $state({
 		connected: false,
 		error: null as string | null
@@ -65,16 +66,20 @@ class RealtimeManager {
 
 		this.ws.subscribe((message) => {
 			const { type, data } = message.data
-			console.log(type, data)
-
+			console.log(`subscribe msg: ${type} - ${data}`)
 			switch (type) {
-				case 'chat:message':
+				case 'chat':
 					lobby.state.messages.push(data)
 					break
-				case 'todo:create':
+				case 'todo':
 					lobby.state.todos.push(data)
 					break
 			}
+		})
+
+		this.ws.on('message', (message) => {
+			const { type, data } = message.data
+			console.log(`message msg: ${type} - ${data}`)
 		})
 
 		this.ws.on('close', () => {
@@ -97,30 +102,10 @@ class RealtimeManager {
 		this.connection.error = null
 	}
 
-	// Add message manually (useful for local echo)
-	addMessage(message: string) {
-		lobby.state.messages.push(message)
-	}
-
-	// Add todo manually
-	addTodo(todo: string) {
-		lobby.state.todos.push(todo)
-	}
-
 	// Clear all messages
 	clearMessages() {
 		lobby.state.messages.length = 0
 	}
-
-	// Clear all todos
-	clearTodos() {
-		lobby.state.todos.length = 0
-	}
-
-	// Update game players
-	// updateGamePlayers(players: Array<Player>) {
-	// 	gameState.players = players
-	// }
 
 	// Update current scene
 	updateCurrentScene(scene: {
@@ -142,7 +127,7 @@ class RealtimeManager {
 }
 
 // Create and export the singleton instance
-export const realtimeManager = new RealtimeManager()
+export const realtimeManager = new RealtimeClient()
 
 // Initialize on import (if in browser)
 if (browser) {
