@@ -69,7 +69,7 @@ class RealtimeClient {
 			console.log(`subscribe msg: ${type} - ${data}`)
 			switch (type) {
 				case 'chat':
-					lobby.state.messages.push(data)
+					lobby.state.chatMessages.push(data)
 					break
 				case 'todo':
 					lobby.state.todos.push(data)
@@ -104,7 +104,7 @@ class RealtimeClient {
 
 	// Clear all messages
 	clearMessages() {
-		lobby.state.messages.length = 0
+		lobby.state.chatMessages.length = 0
 	}
 
 	// Update current scene

@@ -5,7 +5,7 @@
   
   function handleSendMessage() {
     if (chatInput.trim()) {
-      lobby.sendMessage(chatInput);
+      lobby.addChatMessage(chatInput);
       chatInput = '';
     }
   }
@@ -14,8 +14,8 @@
 <div class="chat-container">
   {#if realtimeManager.connection.connected}
     <div class="messages">
-      {#each lobby.state.messages as msg}
-        <div class="message">{msg}</div>
+      {#each lobby.state.chatMessages as msg}
+        <div class="message">{msg.message}</div>
       {/each}
     </div>
     

@@ -4,7 +4,7 @@ import type { Chat, Todo } from '../../../../backend/src/models/models'
 import { createTodo } from '../../../../backend/src/models/models'
 export class Lobby {
 	state = $state({
-		messages: [] as Chat[],
+		chatMessages: [] as Chat[],
 		todos: [] as Todo[]
 	})
 
@@ -13,10 +13,15 @@ export class Lobby {
 		return this._instance || (this._instance = new Lobby())
 	}
 
+	updateChat() {
+		api.lobby.chat.get().then(({ data }) => {
+			lobby.state.chatMessages = data || []
+		})
+	}
 	// Send a chat message
 	addChatMessage(message: string) {
 		if (!message.trim()) return
-		api.lobby.chat.post({ data: message })
+		api.lobby.chat.create.post({ data: message })
 	}
 
 	updateTodos() {

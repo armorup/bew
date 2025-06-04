@@ -27,14 +27,15 @@ class ChatManager {
 
 export const chat = new Elysia({ prefix: '/chat' })
   .decorate('chat', new ChatManager())
+  .get('/', ({ chat }) => {
+    return chat.history
+  })
   .post(
-    '/',
+    '/create',
     ({ body: { data }, chat }) => {
       chat.add(data)
-      return chat.history
     },
     {
       body: t.Object({ data: t.String() }),
-      response: t.Array(ChatSchema),
     }
   )
