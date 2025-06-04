@@ -4,76 +4,66 @@
   import Realtime from '$lib/components/Realtime.svelte';
   import Chat from './components/Chat.svelte';
   import TodoList from './components/TodoList.svelte';
-  
+  import { onMount } from 'svelte';
+  import Tabs from '$lib/components/Tabs.svelte';
+
+  let isMobile = false;
+  type TabItem = 'Chat' | 'Todo' | 'Game';
+  let activeTab: TabItem = 'Chat';
+  const tabList: TabItem[] = ['Chat', 'Todo', 'Game'];
+
   function startGame() {
     goto('/game');
   }
+
+  function handleResize() {
+    isMobile = window.innerWidth < 768;
+  }
+
+  onMount(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
 </script>
 
-<h1>Lobby</h1>
-<h2>{player.name || 'Loading...'}</h2>
+<h2>Lobby - {player.name || 'Loading...'}</h2>
 
-<Realtime showStatus={true} />
+<Realtime showStatus={false} />
 
-<div class="lobby-actions">
-  <button class="start-game-btn" onclick={startGame}>Start</button>
-</div>
-
-<div class="lobby-container">
-  <Chat />
-  <TodoList />
-</div>
+{#if isMobile}
+  <div class="mobile-panel">
+    {#if activeTab === 'Chat'}
+      <Chat />
+    {:else if activeTab === 'Todo'}
+      <TodoList />
+    {:else if activeTab === 'Game'}
+      <div class="game-tab-content">
+        <div class="game-placeholder">Game coming soon!</div>
+        <button class="start-game-btn" on:click={startGame}>Start</button>
+      </div>
+    {/if}
+  </div>
+  <Tabs tabs={tabList} active={activeTab} onSelect={tab => activeTab = tab as TabItem} />
+{:else}
+  <div class="lobby-container">
+    <Chat />
+    <TodoList />
+    <div class="game-tab-content">
+      <div class="game-placeholder">Game coming soon!</div>
+      <button class="start-game-btn" on:click={startGame}>Start</button>
+    </div>
+  </div>
+{/if}
 
 <style>
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #555;
-  }
-  
-  .lobby-container {
+  /* ... existing styles ... */
+  .game-tab-content {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .lobby-actions {
-    margin: 1rem 0;
-    text-align: center;
-  }
-  
-  .start-game-btn {
-    background-color: #ff5722;
-    color: white;
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .start-game-btn:hover {
-    background-color: #e64a19;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  @media (min-width: 768px) {
-    .lobby-container {
-      flex-direction: row;
-    }
-    
-    .lobby-container :global(.chat-container),
-    .lobby-container :global(.todo-container) {
-      flex: 1;
-    }
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 200px;
   }
 </style>

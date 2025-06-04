@@ -11,7 +11,7 @@
       todoInput = '';
     }
   }
-</script>addTodo
+</script>
 <div class="todo-container">
   <h3>Todo</h3>
   

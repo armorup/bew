@@ -1,4 +1,4 @@
-import Elysia, { t } from 'elysia'
+import { t, type TSchema, type Static } from 'elysia'
 
 // ======================
 // Lobby Models

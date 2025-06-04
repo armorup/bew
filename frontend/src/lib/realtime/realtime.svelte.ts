@@ -4,8 +4,6 @@ import { lobby } from '../../routes/lobby/lobby.svelte'
 import { player } from '../util/game.svelte'
 import { getCookie, setCookie, clearCookie } from '../util/browser'
 import { gameState } from '../util/game.svelte'
-import type { Todo } from '../../../../backend/src/models/models'
-// import type { Player } from '../types/game'
 
 // Create reactive state class
 class RealtimeClient {
