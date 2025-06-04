@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia'
 import { realtimeManager } from '../../index'
-import { createTodo, createTodoMsg, type Todo } from '../../models/models'
+import { createTodo, msg, type Todo } from '../../models/models'
 
 class TodoManager {
   private _todos: Set<Todo> = new Set() // {todoId: todo}
@@ -9,7 +9,7 @@ class TodoManager {
     // create a todo Record and add to _todos
     const newTodo = createTodo(todo)
     this._todos.add(newTodo)
-    realtimeManager.broadcast(null, createTodoMsg(newTodo))
+    realtimeManager.broadcast(null, msg.todo(newTodo))
   }
 
   get todos(): Todo[] {

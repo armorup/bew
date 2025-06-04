@@ -1,45 +1,70 @@
 import { t, type TSchema, type Static } from 'elysia'
 
 // ======================
-// Lobby Models
+// Base Schemas
 // ======================
+export const TodoSchema = t.Object({
+  id: t.String(),
+  text: t.String(),
+})
+
+export const ChatSchema = t.Object({
+  id: t.String(),
+  message: t.String(),
+})
 
 // ======================
-// Todo
+// Generic Message Schema Factory
 // ======================
-export const TodoSchema = t.Object({ id: t.String(), text: t.String() })
-export type Todo = typeof TodoSchema.static
-export const TodoMsgSchema = t.Object({
-  type: t.Literal('todo'),
-  data: TodoSchema,
-})
-export type TodoMsg = typeof TodoMsgSchema.static
+function createMessageSchema<T extends TSchema>(type: string, dataSchema: T) {
+  return t.Object({
+    type: t.Literal(type),
+    data: dataSchema,
+  })
+}
+
+// ======================
+// Message Schemas
+// ======================
+export const TodoMsgSchema = createMessageSchema('todo', TodoSchema)
+export const ChatMsgSchema = createMessageSchema('chat', ChatSchema)
+export const messageSchemas = t.Union([TodoMsgSchema, ChatMsgSchema])
+
+// ======================
+// Types
+// ======================
+export type Todo = Static<typeof TodoSchema>
+export type Chat = Static<typeof ChatSchema>
+export type TodoMsg = Static<typeof TodoMsgSchema>
+export type ChatMsg = Static<typeof ChatMsgSchema>
+export type Message = TodoMsg | ChatMsg
+
+// ======================
+// Generic Message Creator
+// ======================
+function createMessage<T>(type: string, data: T): { type: string; data: T } {
+  return { type, data }
+}
+
+// ======================
+// Entity Creators
+// ======================
 export function createTodo(text: string): Todo {
   return { id: crypto.randomUUID(), text }
 }
-export function createTodoMsg(todo: Todo): Message {
-  return { type: 'todo', data: todo }
-}
 
-// ======================
-// Chat
-// ======================
-export const ChatSchema = t.Object({ id: t.String(), message: t.String() })
-export type Chat = typeof ChatSchema.static
-export const ChatMsgSchema = t.Object({
-  type: t.Literal('chat'),
-  data: ChatSchema,
-})
-export type ChatMsg = typeof ChatMsgSchema.static
 export function createChat(message: string): Chat {
   return { id: crypto.randomUUID(), message }
 }
-export function createChatMsg(chat: Chat): ChatMsg {
-  return { type: 'chat', data: chat }
-}
 
 // ======================
-// Message for ws
+// Message Creators (Simplified)
 // ======================
-export const messageSchemas = t.Union([TodoMsgSchema, ChatMsgSchema])
-export type Message = TodoMsg | ChatMsg
+export const msg = {
+  todo: (data: Todo) => createMessage('todo', data),
+  chat: (data: Chat) => createMessage('chat', data),
+}
+
+// Alternative: Individual message creators if you prefer
+// export const createTodoMsg = (data: Todo) => msg.todo(data)
+// export const createChatMsg = (data: Chat) => msg.chat(data)

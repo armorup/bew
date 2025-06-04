@@ -1,7 +1,6 @@
 import { api } from '$lib/app/api'
 import { realtimeManager } from '$lib/realtime/realtime.svelte'
 import type { Chat, Todo } from '../../../../backend/src/models/models'
-import { createTodo } from '../../../../backend/src/models/models'
 export class Lobby {
 	state = $state({
 		chatMessages: [] as Chat[],
