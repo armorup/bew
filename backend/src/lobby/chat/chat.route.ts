@@ -1,12 +1,12 @@
 import { Elysia, t } from 'elysia'
 import { realtimeManager } from '../../index'
-import { createChat, msg, type Chat } from '../../models/models'
+import { create, msg, type Chat } from '../../models/models'
 
 class ChatManager {
   private _history: Chat[] = []
 
   add(message: string) {
-    const chat = createChat(message)
+    const chat = create.chat(message)
     this._history.push(chat)
     realtimeManager.broadcast('lobby', msg.chat(chat))
   }
