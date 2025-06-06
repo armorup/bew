@@ -28,6 +28,21 @@ const ENTITY_SCHEMAS = {
     content: t.String(),
     authorId: t.String(),
   }),
+} as const
+
+// ======================
+// Creator Configuration
+// ======================
+// Define how each entity should be created from simple parameters
+const ENTITY_CREATORS = {
+  todo: (text: string) => ({ text }),
+  chat: (message: string) => ({ message }),
+  user: (name: string, email: string) => ({ name, email }),
+  post: (title: string, content: string, authorId: string) => ({
+    title,
+    content,
+    authorId,
+  }),
 }
 
 // ======================
@@ -50,9 +65,13 @@ export type MessageTypes = {
 // Extract non-id fields for each entity
 type EntityCreateData<T extends keyof EntityTypes> = Omit<EntityTypes[T], 'id'>
 
-// Creator function signatures
+// Creator function signatures - now use the custom creator signatures
 type EntityCreators = {
-  [K in keyof EntityTypes]: (data: EntityCreateData<K>) => EntityTypes[K]
+  [K in keyof typeof ENTITY_CREATORS]: (typeof ENTITY_CREATORS)[K] extends (
+    ...args: infer P
+  ) => any
+    ? (...args: P) => EntityTypes[K]
+    : never
 }
 
 type MessageCreators = {
@@ -81,13 +100,13 @@ function createMessage<T extends keyof EntityTypes>(
 
 // Auto-generate entity creators
 export const create = Object.keys(ENTITY_SCHEMAS).reduce((acc, key) => {
-  ;(acc as any)[key] = (data: any) => createEntity(key as any, data)
+  acc[key as keyof EntityTypes] = (data: any) => createEntity(key as any, data)
   return acc
-}, {} as Record<string, any>) as EntityCreators
+}, {} as EntityCreators)
 
 // Auto-generate message creators
 export const msg = Object.keys(ENTITY_SCHEMAS).reduce((acc, key) => {
-  ;(acc as any)[key] = (data: any) => createMessage(key as any, data)
+  acc[key as keyof EntityTypes] = (data: any) => createMessage(key as any, data)
   return acc
 }, {} as Record<string, any>) as MessageCreators
 
@@ -140,17 +159,20 @@ export type PostMsg = MessageTypes['postMsg']
 // ======================
 // Helper: One-liner message creation (auto-generated!)
 // ======================
-// export const quickMsg = Object.keys(ENTITY_SCHEMAS).reduce((acc, key) => {
-//   ;(acc as any)[key] = (data: any) => {
-//     const entity = create[key as keyof EntityTypes](data)
-//     return msg[key as keyof EntityTypes](entity)
+// export const quickMsg = Object.keys(ENTITY_SCHEMAS).reduce(
+//   (acc, key) => {
+//     acc[key as keyof EntityTypes] = (data: any) => {
+//       const entity = create[key as keyof EntityTypes](data)
+//       return msg[key as keyof EntityTypes](entity)
+//     }
+//     return acc
+//   },
+//   {} as {
+//     [K in keyof EntityTypes]: (
+//       data: EntityCreateData<K>
+//     ) => MessageTypes[`${K}Msg`]
 //   }
-//   return acc
-// }, {} as Record<string, any>) as {
-//   [K in keyof EntityTypes]: (
-//     data: EntityCreateData<K>
-//   ) => MessageTypes[`${K}Msg`]
-// }
+// )
 
 // ======================
 // Export Schemas for Validation
@@ -166,14 +188,10 @@ export const schemas = {
 // ======================
 
 // Entity creation (auto-generated creators)
-const todo = create.todo({ text: 'Learn Elysia' })
-const chat = create.chat({ message: 'Hello world' })
-const user = create.user({ name: 'Alice', email: 'alice@example.com' })
-const post = create.post({
-  title: 'My Post',
-  content: 'Post content',
-  authorId: user.id,
-})
+const todo = create.todo('Learn Elysia')
+const chat = create.chat('Hello world')
+const user = create.user('Alice', 'alice@example.com')
+const post = create.post('My Post', 'Post content', user.id)
 
 // Message creation (auto-generated creators)
 const todoMsg = msg.todo(todo)

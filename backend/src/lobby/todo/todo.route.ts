@@ -8,7 +8,7 @@ class TodoManager {
 
   add(todo: string) {
     // create a todo Record and add to _todos
-    const newTodo = create.todo(todo)
+    const newTodo = create.todo({ text: todo })
     this._todos.add(newTodo)
     realtimeManager.broadcast(null, msg.todo(newTodo))
   }
