@@ -6,9 +6,9 @@ import { create } from '../../models/models'
 class TodoManager {
   private _todos: Set<Todo> = new Set() // {todoId: todo}
 
-  add(todo: string) {
+  add(text: string) {
     // create a todo Record and add to _todos
-    const newTodo = create.todo(todo)
+    const newTodo = create.todo({ text })
     this._todos.add(newTodo)
     realtimeManager.broadcast(null, msg.todo(newTodo))
   }
