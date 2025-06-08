@@ -60,11 +60,11 @@ export type ChatMsg = MessageTypes['chatMsg']
 const MESSAGE_SCHEMAS = Object.fromEntries(
   Object.entries(ENTITY_SCHEMAS).map(([key, schema]) => [
     `${key}Msg`,
-    createMessageSchema(key, schema),
+    createMessageSchema(key as typeof key, schema),
   ])
 ) as {
   [K in keyof typeof ENTITY_SCHEMAS as `${K & string}Msg`]: ReturnType<
-    typeof createMessageSchema<(typeof ENTITY_SCHEMAS)[K]>
+    typeof createMessageSchema<K, (typeof ENTITY_SCHEMAS)[K]>
   >
 }
 
@@ -75,7 +75,10 @@ export const messageSchemas = t.Union([
 ] as const)
 
 // Generic message schema factory
-function createMessageSchema<T extends TSchema>(type: string, dataSchema: T) {
+function createMessageSchema<TType extends string, T extends TSchema>(
+  type: TType,
+  dataSchema: T
+) {
   return t.Object({
     type: t.Literal(type),
     data: dataSchema,
