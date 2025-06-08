@@ -12,7 +12,7 @@ const ENTITY_SCHEMAS = {
   }),
   chat: t.Object({
     id: t.String(),
-    message: t.String(),
+    text: t.String(),
   }),
   // *************************************************
   // Add new schemas here
@@ -28,7 +28,7 @@ const ENTITY_SCHEMAS = {
 // Entity creators
 export const create = {
   todo: (text: string) => createEntity('todo', { text }),
-  chat: (message: string) => createEntity('chat', { message }),
+  chat: (text: string) => createEntity('chat', { text }),
   // *************************************************
   // When you add new schemas, add entity creators here
   // *************************************************

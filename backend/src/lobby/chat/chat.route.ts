@@ -27,10 +27,10 @@ export const chat = new Elysia({ prefix: '/chat' })
   })
   .post(
     '/create',
-    ({ body: { data }, chat }) => {
-      chat.add(data)
+    ({ body: { text }, chat }) => {
+      chat.add(text)
     },
     {
-      body: t.Object({ data: t.String() }),
+      body: t.Object({ text: t.String() }),
     }
   )
