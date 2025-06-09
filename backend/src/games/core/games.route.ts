@@ -1,30 +1,31 @@
 import Elysia, { t } from 'elysia'
 import { loadStory } from '../db/db'
-import { Player } from './models/player'
-import { Game } from './models/game'
-import { GameJoinable } from './models/game.joinable'
 import { gamesManager } from './games.manager'
+import { gameJoinable, gameSchema } from './games.schemas'
+import { create } from '../../models/models'
+import { user } from '../../user/user'
 
 export const games = new Elysia({ prefix: '/games' })
+  .use(user)
+
   .decorate('gamesManager', gamesManager)
   // Get all games
   .get(
     '/',
     ({ gamesManager }) => {
-      return gamesManager.games.map((game) => game.toJSON())
+      return gamesManager.games
     },
     {
-      response: t.Array(Game.t),
+      response: t.Array(gameSchema),
     }
   )
   // Create a new game
   .post(
     '/create',
-    async ({ body, gamesManager, status }) => {
-      const story = loadStory(body.storyId ?? 'story-1')
-      const gameId = gamesManager.createGame(story)
+    async ({ gamesManager, status }) => {
+      const game = gamesManager.createGame()
       return status(200, {
-        gameId: gameId,
+        gameId: game.id,
       })
     },
     {
@@ -40,30 +41,38 @@ export const games = new Elysia({ prefix: '/games' })
     ({ params, gamesManager }) => {
       const game = gamesManager.getGame(params.id)
       if (!game) throw new Error('Game not found')
-      return game.toJSON()
+      return game
     },
     {
       params: t.Object({ id: t.String() }),
-      response: Game.t,
+      response: gameSchema,
     }
   )
   // Join game
   .post(
     '/:id/join',
-    ({ params, body, gamesManager }) => {
-      const game = gamesManager.getGame(params.id)
-      if (!game) throw new Error('Game not found')
+    ({ params, body, gamesManager, store: { user } }) => {
+      const gameId = params.id
+      const { userId } = body
 
-      const player = new Player(crypto.randomUUID(), body.name)
-      game.addPlayer(player)
+      // Look up the user in the store
+      const userName = user[userId]
+      if (!userName) throw new Error('User not found')
+
+      // Create the player using the stored name
+      const player = create.player({ name: userName })
+
+      // Add the player to the game
+      const updatedGame = gamesManager.addPlayerTo(gameId, player)
+
       return {
-        gameId: game.id,
+        gameId: updatedGame.id,
         playerId: player.id,
       }
     },
     {
       params: t.Object({ id: t.String() }),
-      body: t.Object({ name: t.String() }),
+      body: t.Object({ userId: t.String() }),
       response: t.Object({
         gameId: t.String(),
         playerId: t.String(),
@@ -73,7 +82,7 @@ export const games = new Elysia({ prefix: '/games' })
   .get(
     '/joinable',
     ({ gamesManager }) => {
-      return gamesManager.getJoinableGames().map((game) => game.toJSON())
+      return gamesManager.getJoinableGames()
     },
-    { response: t.Array(GameJoinable.t) }
+    { response: t.Array(gameJoinable) }
   )

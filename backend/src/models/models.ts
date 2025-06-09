@@ -1,7 +1,13 @@
 import { t, type TSchema, type Static } from 'elysia'
-import { TODO_SCHEMA } from '../lobby/todo/todo.schemas'
-import { CHAT_SCHEMA } from '../lobby/chat/chat.schemas'
-import { gameSchemas } from '../games/core/games.schemas'
+import {
+  choiceSchema,
+  gameJoinable,
+  gameSchema,
+  playerSchema,
+  sceneSchema,
+  storySchema,
+} from '../games/core/games.schemas'
+import { todoSchema, chatSchema } from '../lobby/lobby.schemas'
 
 // ======================
 // Type Registry System
@@ -9,17 +15,37 @@ import { gameSchemas } from '../games/core/games.schemas'
 
 // Import schemas from different features
 const ENTITY_SCHEMAS = {
-  ...gameSchemas,
-  todo: TODO_SCHEMA,
-  chat: CHAT_SCHEMA,
+  // Game
+  player: playerSchema,
+  scene: sceneSchema,
+  game: gameSchema,
+  gameJoinable: gameJoinable,
+  choice: choiceSchema,
+  story: storySchema,
+
+  // Lobby
+  todo: todoSchema,
+  chat: chatSchema,
 } as const
 
 // Convenience type exports - add new types here
 export type Message = MessageTypes[keyof MessageTypes]
 export type Todo = EntityTypes['todo']
-export type TodoMsg = MessageTypes['todoMsg']
+// export type TodoMsg = MessageTypes['todoMsg']
 export type Chat = EntityTypes['chat']
 export type ChatMsg = MessageTypes['chatMsg']
+export type Player = EntityTypes['player']
+export type PlayerMsg = MessageTypes['playerMsg']
+export type Scene = EntityTypes['scene']
+export type SceneMsg = MessageTypes['sceneMsg']
+export type Game = EntityTypes['game']
+export type GameMsg = MessageTypes['gameMsg']
+export type Choice = EntityTypes['choice']
+export type ChoiceMsg = MessageTypes['choiceMsg']
+export type Story = EntityTypes['story']
+export type StoryMsg = MessageTypes['storyMsg']
+export type GameJoinable = EntityTypes['gameJoinable']
+export type GameJoinableMsg = MessageTypes['gameJoinableMsg']
 
 // ================================================
 // Auto-generated Types and Schemas
@@ -43,7 +69,7 @@ export const create = Object.fromEntries(
 }
 
 // *************************************************
-// Auto-generate message creators based on ENTITY_SCHEMAS and create
+// Auto-generate message creators based on ENTITY_SCHEMAS
 // Usage: msg.todo(create.todo('text'))
 // *************************************************
 export const msg = Object.fromEntries(
@@ -112,7 +138,7 @@ export type MessageTypes = {
 }
 
 // Type helper object for convenient access
-export const Type = {
+export const Types = {
   // Entity types
   ...Object.fromEntries(
     Object.keys(ENTITY_SCHEMAS).map((key) => [key, null as any])

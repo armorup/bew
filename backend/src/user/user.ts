@@ -7,7 +7,6 @@ const userSchema = t.Object({
 })
 
 export const user = new Elysia({ prefix: '/user' })
-
   .state({
     user: {} as Record<string, string>, // {userId: userName}
     session: {} as Record<number, string>, // {sessionId: userId}

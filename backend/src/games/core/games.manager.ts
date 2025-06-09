@@ -1,8 +1,8 @@
-import { Game, GameStatus } from './models/game'
-import { GameJoinable } from './models/game.joinable'
-import { Story } from './models/story'
+import { Game, GameJoinable, Player } from '../../models/models'
+import { createNewGame, toGameJoinable } from './game.helpers'
+import { GameStatus } from './game.enums'
 
-class GamesManager {
+export class GamesManager {
   private _games = new Map<string, Game>()
 
   get games(): Game[] {
@@ -13,10 +13,24 @@ class GamesManager {
     return this._games.has(id)
   }
 
-  createGame(story: Story): string {
-    const id = crypto.randomUUID()
-    this._games.set(id, new Game(id, story))
-    return id
+  addPlayerTo(gameId: string, player: Player): Game {
+    const game = this._games.get(gameId)
+    if (!game) throw new Error('Game not found')
+
+    if (game.players.some((p) => p.id === player.id)) {
+      throw new Error('Player already exists')
+    }
+
+    const updatedGame = { ...game, players: [...game.players, player] }
+    this._games.set(gameId, updatedGame)
+
+    return updatedGame
+  }
+
+  createGame(): Game {
+    const newGame = createNewGame()
+    this._games.set(newGame.id, newGame)
+    return newGame
   }
 
   getJoinableGames(): GameJoinable[] {
@@ -24,9 +38,9 @@ class GamesManager {
       .filter(
         (game) =>
           game.status === GameStatus.WAITING &&
-          game.players.size < game.maxPlayers
+          game.players.length < game.maxPlayers
       )
-      .map((game) => GameJoinable.fromGame(game))
+      .map((game) => toGameJoinable(game))
   }
 
   getGame(id: string): Game {
@@ -41,7 +55,8 @@ class GamesManager {
 
   cleanupOldGames(): void {
     this._games.forEach((game, id) => {
-      if (game.createdAt.getTime() + 1000 * 60 * 60 * 24 < Date.now()) {
+      const createdAt = new Date(game.createdAt).getTime()
+      if (createdAt + 1000 * 60 * 60 * 24 < Date.now()) {
         this.removeGame(id)
       }
     })
@@ -57,3 +72,4 @@ class GamesManager {
 }
 
 export const gamesManager = new GamesManager()
+export { GameStatus }
