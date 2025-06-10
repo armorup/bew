@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { game } from './game.svelte';
+  import { game } from './[id]/game.svelte';
 </script>
 
 <svelte:head>
-  <title>Adventure Game</title>
+  <title>Games</title>
 </svelte:head>
 
 <div class="game-container">
   <div class="scene-text">
-    <p>{game.scene?.text}</p>
+    <p>List of games here?</p>
   </div>
 </div>

@@ -1,6 +1,7 @@
 import { api } from '$lib/app/api.js'
 import { browser } from '$app/environment'
 import { lobby } from '../../routes/lobby/lobby.svelte'
+import { game } from '../../routes/games/[id]/game.svelte'
 import { player } from '../util/game.svelte'
 import { getCookie, setCookie, clearCookie } from '../util/browser'
 import { gameState } from '../util/game.svelte'
@@ -58,7 +59,7 @@ class RealtimeClient {
 		this.ws = api.ws.subscribe()
 
 		this.ws.on('open', () => {
-			console.log('Connected to chat room as', getCookie('playerName'), getCookie('playerId'))
+			console.log('Connected as', getCookie('playerName'), getCookie('playerId'))
 			this.connection.connected = true
 		})
 
@@ -70,7 +71,12 @@ class RealtimeClient {
 					lobby.state.chatMessages.push(data)
 					break
 				case 'todo':
+					console.log('Todo update received:', data)
 					lobby.state.todos.push(data)
+					break
+				case 'game':
+					console.log('Game update received:', data)
+					game.state = data
 					break
 			}
 		})

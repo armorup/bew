@@ -1,6 +1,7 @@
-import { Game, GameJoinable, Player } from '../../models/models'
-import { createNewGame, toGameJoinable } from './game.helpers'
+import { createNewGame, toGameJoinable, createGameMsg } from './game.helpers'
 import { GameStatus } from './game.enums'
+import { realtimeManager } from '../..'
+import type { Game, GameJoinable, Player } from './games.schemas'
 
 export class GamesManager {
   private _games = new Map<string, Game>()
@@ -24,6 +25,8 @@ export class GamesManager {
     const updatedGame = { ...game, players: [...game.players, player] }
     this._games.set(gameId, updatedGame)
 
+    // Broadcast updated Game
+    realtimeManager.broadcast(gameId, createGameMsg(updatedGame))
     return updatedGame
   }
 

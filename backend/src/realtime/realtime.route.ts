@@ -1,9 +1,9 @@
 import Elysia, { t } from 'elysia'
 import { realtimeManager } from '..'
-import { messageSchemas } from '../models/models'
+import { messageSchema } from '../models/models'
 
 export const realtime = new Elysia().ws('/ws', {
-  response: messageSchemas,
+  response: messageSchema,
 
   open(ws) {
     // TODO: get userId from auth

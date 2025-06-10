@@ -1,9 +1,8 @@
 import Elysia, { t } from 'elysia'
-import { loadStory } from '../db/db'
 import { gamesManager } from './games.manager'
 import { gameJoinable, gameSchema } from './games.schemas'
-import { create } from '../../models/models'
 import { user } from '../../user/user'
+import { createPlayer } from './game.helpers'
 
 export const games = new Elysia({ prefix: '/games' })
   .use(user)
@@ -60,7 +59,7 @@ export const games = new Elysia({ prefix: '/games' })
       if (!userName) throw new Error('User not found')
 
       // Create the player using the stored name
-      const player = create.player({ name: userName })
+      const player = createPlayer(userName)
 
       // Add the player to the game
       const updatedGame = gamesManager.addPlayerTo(gameId, player)

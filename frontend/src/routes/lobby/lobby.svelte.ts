@@ -1,6 +1,5 @@
 import { api } from '$lib/app/api'
-import { realtimeManager } from '$lib/realtime/realtime.svelte'
-import type { Chat, Todo } from '../../../../backend/src/models/models'
+import type { Chat, Todo } from '../../../../backend/src/models/types'
 export class Lobby {
 	state = $state({
 		chatMessages: [] as Chat[],
@@ -18,9 +17,9 @@ export class Lobby {
 		})
 	}
 	// Send a chat message
-	addChatMessage(message: string) {
-		if (!message.trim()) return
-		api.lobby.chat.create.post({ data: message })
+	addChatMessage(text: string) {
+		if (!text.trim()) return
+		api.lobby.chat.create.post({ text })
 	}
 
 	updateTodos() {

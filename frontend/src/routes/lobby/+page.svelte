@@ -9,7 +9,7 @@
 
   let isMobile = false;
   type TabItem = 'Chat' | 'Todo' | 'Game';
-  let activeTab: TabItem = 'Chat';
+  let activeTab: TabItem = 'Todo';
   const tabList: TabItem[] = ['Chat', 'Todo', 'Game'];
 
   function startGame() {

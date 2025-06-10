@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia'
 import type { ServerWebSocket } from 'bun'
-import type { Message } from '../models/models'
+import type { WSMessage } from '../models/models'
 //------- WebSocket Service -------
 export class RealtimeManager {
   readonly DEFAULT_CHANNEL = 'lobby'
@@ -86,7 +86,7 @@ export class RealtimeManager {
     this.connections.delete(userId)
   }
 
-  broadcast(channel: string | null, message: Message) {
+  broadcast(channel: string | null, message: WSMessage) {
     channel = channel || this.DEFAULT_CHANNEL
     console.log(`broadcasting to ${channel}`)
     this.server?.publish(channel, JSON.stringify(message))
